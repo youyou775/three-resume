@@ -1,8 +1,9 @@
 "use client";
-import { Circle, Html, OrbitControls, Stats, useProgress, useGLTF, VideoTexture } from '@react-three/drei';
-import { CameraProps, Canvas } from '@react-three/fiber';
+import { Html, OrbitControls, Stats, useProgress, useGLTF } from '@react-three/drei';
+import { CameraProps, Canvas, useFrame } from '@react-three/fiber';
 import React, { Suspense } from 'react';
 import * as THREE from 'three';
+import dynamic from 'next/dynamic'
 
 function Loader() {
   const { progress } = useProgress();
@@ -10,10 +11,21 @@ function Loader() {
   return <Html center>{progress} % loaded</Html>;
 }
 
+function MyCameraReactsToStateChanges() {
+  useFrame(state => {
+    //Animate fans
+    state.scene.traverse(obj => {
+      if (obj.name.includes('Fan')) {
+        obj.rotation.z += 0.2;
+      }
+    });
+  });
 
-export default function Scene() {
-  const gltf = useGLTF('/export1.glb', true);
-  const textureLoader = new THREE.TextureLoader();
+  return null;
+}
+
+const SceneContent: React.FC = () => {
+  const gltf = useGLTF('/export2.glb', true);
   // Traverse the scene to extract unique "collection" names from gltf node extras
   const textures: { [key: string]: string } = {};
   gltf.scene.traverse(obj => {
@@ -22,7 +34,7 @@ export default function Scene() {
     }
   });
 
-
+  const textureLoader = new THREE.TextureLoader();
   const loadedTextures = Object.fromEntries(
     Object.entries(textures).map(([key, path]) => {
       const tex = textureLoader.load(path);
@@ -64,46 +76,34 @@ export default function Scene() {
         obj.material.map.minFilter = THREE.LinearFilter;
       }
     }
-    React.useEffect(() => {
-      let controls: any;
-      const handleControls = () => {
-        // Find OrbitControls in the scene
-        controls = gltf.scene.parent?.children
-          ?.find((child: any) => child.type === "OrbitControls");
-        if (controls) {
-          controls.addEventListener('change', () => {
-            console.log('Orbit target:', controls.target);
-          });
-        }
-      };
-
-      // Wait for next tick to ensure controls are mounted
-      setTimeout(handleControls, 0);
-
-      return () => {
-        if (controls) {
-          controls.removeEventListener('change', () => { });
-        }
-      };
-    }, [gltf.scene]);
-  }
-
-  );
-
+  });
 
   return (
     <>
       <h1 className="text-4xl text-center">Resume</h1>
       <Suspense fallback={<Loader />}>
         <Canvas camera={gltf.cameras[0] as CameraProps} shadows>
-          {/* <ambientLight intensity={0.5} /> */}
-          {/* <directionalLight position={[5, 10, 5]} intensity={0.001} castShadow /> */}
           <primitive object={gltf.scene} />
-          <OrbitControls target={[0, 1, 0]} />
-          <axesHelper args={[5]} />
+          <OrbitControls
+            target={[0, 1, 0]}
+            onChange={e => {
+              // Detect target change
+              // const controls = e?.target;
+              // console.log('OrbitControls target changed:', controls?.target);
+            }}
+          />
+          {/* <axesHelper args={[5]} /> */}
           <Stats />
+          <MyCameraReactsToStateChanges />
         </Canvas>
       </Suspense>
     </>
   );
-}
+};
+
+const Scene = dynamic(() => Promise.resolve(SceneContent), {
+  ssr: false
+});
+
+export default Scene;
+
