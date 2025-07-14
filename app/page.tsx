@@ -1,14 +1,13 @@
-// src/App.tsx
+"use client";
 import React from 'react';
-import Scene from './scene';
+import dynamic from 'next/dynamic';
 
-const Home: React.FC = () => {
+const SceneContent = dynamic(() => import('./components/scene'), { ssr: false });
 
+export default function Home() {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <Scene />
+      <SceneContent />
     </div>
   );
-};
-
-export default Home;
+}
