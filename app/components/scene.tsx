@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import ThreeStage from './stages/three';
-import IntroStage from './stages/intro';
-import AboutStage from './stages/about';
-import SidePane from './stages/sidePane';
-import Header from './stages/header';
-import Footer from './footer';
-import { useGLTFAssets } from './sceneLoader';
+import ThreeStage from './stages/Three';
+import IntroStage from './stages/Intro';
+import AboutStage from './stages/About';
+import SidePane from './stages/SidePane';
+import Header from './stages/Header';
+import Footer from './Footer';
+import { useGLTFAssets } from './SceneLoader';
 
 export type HeaderFooterAlign = 'left' | 'center' | 'right';
 
@@ -61,8 +61,8 @@ const Scene: React.FC = () => {
 
   // camera configs
   const aboutCamera = {
-    position: [12.85, 6.687, 7.583] as [number, number, number],
-    lookAt: [1.543, 1.833, -2.93] as [number, number, number],
+    position: [5.350, 4.100, -0.871] as [number, number, number],
+    lookAt: [0.069, 2.928, -1.892] as [number, number, number],
     fov: 35,
   };
 
@@ -73,8 +73,8 @@ const Scene: React.FC = () => {
       const p = g.cameras[0].position;
       // get target fallback — use About target or stored value
       return {
-        position: [p.x, p.y, p.z] as [number, number, number],
-        lookAt: aboutCamera.lookAt,
+        position: [11.118, 2.794, 7.675] as [number, number, number],
+        lookAt: [1.364, 2.331, -2.716] as [number, number, number],
         fov: aboutCamera.fov,
       };
     }
@@ -139,7 +139,7 @@ const Scene: React.FC = () => {
               show={scrollIndex === 0 || activeScene >= 0}
               cameraA={aboutCamera}
               cameraB={modelCamera}
-              progress={ scrollProgress} // when index 0 -> interpolate to 1; otherwise fully at model
+              progress={scrollProgress} // when index 0 -> interpolate to 1; otherwise fully at model
               scrollIndex={scrollIndex}
             />
           </div>
@@ -169,7 +169,7 @@ const Scene: React.FC = () => {
           {scrollIndex >= 1 && (
             <div
               style={{
-                // position: 'fixed', // REMOVE or change to 'relative'
+                position: 'fixed', // REMOVE or change to 'relative'
                 // top: 32,          // REMOVE
                 // right: 0,         // REMOVE
                 width: '30vw',

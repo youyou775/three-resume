@@ -1,6 +1,6 @@
 
 
-import {HeaderFooterAlign} from '../scene';
+import {HeaderFooterAlign} from '../Scene';
 
 export default function Header({
     headerFooterTransparent,
