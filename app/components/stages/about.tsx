@@ -17,8 +17,8 @@ export default function AboutStage({
                     justifyContent: 'center',
                     // background: '#fafafa',
                     color: '#222',
-                    zIndex: 3,
-                    opacity: 1,
+                    // zIndex: 3,
+                    // opacity: 1,
                     pointerEvents: 'auto',
                     transition: 'opacity 0.7s cubic-bezier(.77,0,.18,1)',
                 }}

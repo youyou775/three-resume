@@ -16,8 +16,8 @@ const Scene: React.FC = () => {
   const [scrollIndex, setScrollIndex] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0); // new
 
-  const [headerFooterTransparent, setHeaderFooterTransparent] = useState(true);
-  const [headerFooterAlign, setHeaderFooterAlign] = useState<HeaderFooterAlign>('center');
+  // const [headerFooterTransparent, setHeaderFooterTransparent] = useState(true);
+  // const [headerFooterAlign, setHeaderFooterAlign] = useState<HeaderFooterAlign>('center');
 
   useEffect(() => {
     document.body.style.height = intro ? '100vh' : `${(gltfs.length + 1) * 100}vh`;
@@ -53,11 +53,11 @@ const Scene: React.FC = () => {
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
   };
 
-  const getAlignStyle = () => {
-    if (headerFooterAlign === 'left') return { justifyContent: 'flex-start', textAlign: 'left' as React.CSSProperties['textAlign'], paddingLeft: 32 };
-    if (headerFooterAlign === 'right') return { justifyContent: 'flex-end', textAlign: 'right' as React.CSSProperties['textAlign'], paddingRight: 32 };
-    return { justifyContent: 'center', textAlign: 'center' as React.CSSProperties['textAlign'] };
-  };
+  // const getAlignStyle = () => {
+  //   if (headerFooterAlign === 'left') return { justifyContent: 'flex-start', textAlign: 'left' as React.CSSProperties['textAlign'], paddingLeft: 32 };
+  //   if (headerFooterAlign === 'right') return { justifyContent: 'flex-end', textAlign: 'right' as React.CSSProperties['textAlign'], paddingRight: 32 };
+  //   return { justifyContent: 'center', textAlign: 'center' as React.CSSProperties['textAlign'] };
+  // };
 
   // camera configs
   const aboutCamera = {
@@ -82,22 +82,14 @@ const Scene: React.FC = () => {
   })();
 
   // Determine width and zoom based on scrollIndex
-  const threeWidth = scrollIndex === 0 ? '100vw' : '70vw';
-  const zoom = scrollIndex === 0;
+  // const threeWidth = scrollIndex === 0 ? '100vw' : '70vw';
+  // const zoom = scrollIndex === 0;
 
   return (
     <>
       {/* Loading screen */}
       {!ready && (
-        <div style={{
-          color: '#fff',
-          background: '#111',
-          width: '100vw',
-          height: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
+        <div className="text-white bg-gray-900 w-screen h-screen flex items-center justify-center">
           Loading 3D assets...
         </div>
       )}
@@ -108,32 +100,16 @@ const Scene: React.FC = () => {
       {/* Main scrollable area */}
       {!intro && (
         <>
-          <Header
+          {/* <Header
             headerFooterTransparent={headerFooterTransparent}
             setHeaderFooterTransparent={setHeaderFooterTransparent}
             headerFooterAlign={headerFooterAlign}
             setHeaderFooterAlign={setHeaderFooterAlign}
             getAlignStyle={getAlignStyle}
-          />
+          /> */}
 
           {/* Fixed ThreeStage container, transitions width and zoom */}
-          <div
-            style={{
-              position: 'fixed',
-              left: 0,
-              top: 32,
-              width: '100vw', // Always 100vw
-              height: 'calc(100vh - 64px)',
-              zIndex: 0,
-              background: 'var(--background, #fff)',
-              boxShadow: scrollIndex >= 1 ? '2px 0 8px rgba(0,0,0,0.04)' : undefined,
-              transition: `
-                box-shadow 0.7s cubic-bezier(.77,0,.18,1),
-                background 0.7s cubic-bezier(.77,0,.18,1)
-              `,
-              pointerEvents: 'auto',
-            }}
-          >
+          <div className="fixed w-screen h-screen">
             <ThreeStage
               gltf={gltfs[scrollIndex === 0 ? 0 : activeScene]}
               show={scrollIndex === 0 || activeScene >= 0}
@@ -146,54 +122,22 @@ const Scene: React.FC = () => {
 
           {/* Overlay About text only on about page */}
           {scrollIndex === 0 && (
-            <div style={{
-              position: 'absolute',
-              left: 0,
-              top: 32,
-              width: '100vw',
-              height: 'calc(100vh - 64px)',
-              zIndex: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#222',
-              pointerEvents: 'auto',
-              background: 'rgba(255,255,255,0.0)',
-            }}>
+            <div className="fixed top-[-50%] h-screen flex flex-col items-center justify-center">
               <AboutStage />
             </div>
           )}
 
           {/* SidePane only on main content pages */}
-          {scrollIndex >= 1 && (
-            <div
-              style={{
-                position: 'fixed', // REMOVE or change to 'relative'
-                // top: 32,          // REMOVE
-                // right: 0,         // REMOVE
-                width: '30vw',
-                minHeight: 'calc(100vh - 64px)', // Use minHeight for scrollable content
-                overflowY: 'auto',
-                background: 'var(--color-background, #fafafa)',
-                zIndex: 2, // Lower zIndex since it's not overlaying
-                padding: 32,
-                transform: activeScene >= 0 ? 'translateX(0)' : 'translateX(100%)',
-                opacity: activeScene >= 0 ? 1 : 0,
-                transition: 'transform 0.7s cubic-bezier(.77,0,.18,1), opacity 0.7s cubic-bezier(.77,0,.18,1)',
-                pointerEvents: activeScene >= 0 ? 'auto' : 'none',
-                boxShadow: '-2px 0 8px rgba(0,0,0,0.04)',
-                marginLeft: '70vw',
-              }}
-            >
-              <SidePane />
+          {scrollIndex > 0 && (
+            <div className="fixed top-[30%] right-0 -translate-y-[30%] flex items-center w-[30vw]">
+              <SidePane scrollIndex={scrollIndex} onSelect={(idx) => setScrollIndex(idx)} />
             </div>
           )}
 
-          <Footer
+          {/* <Footer
             headerFooterTransparent={headerFooterTransparent}
             getAlignStyle={getAlignStyle}
-          />
+          /> */}
         </>
       )}
     </>

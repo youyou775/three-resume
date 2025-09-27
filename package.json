@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@react-spring/three": "^10.0.1",
     "@react-three/drei": "^10.0.4",
     "@react-three/fiber": "^9.1.0",
