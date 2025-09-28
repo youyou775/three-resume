@@ -1,17 +1,15 @@
 "use client";
-import React, { useLayoutEffect, useMemo, useRef, useEffect, useState } from "react";
+import React, { useLayoutEffect, useMemo, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useScrollStore } from "@/app/store/scrollStore";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function SidePane({
-  scrollIndex,
-  onSelect,
-}: {
-  scrollIndex: number;
-  onSelect?: (index: number) => void;
-}) {
+export default function SidePane() {
+  // Get scroll state from store - no props needed!
+  const { scrollIndex, goToSection } = useScrollStore();
+
   const texts = useMemo(() => {
     switch (scrollIndex) {
       case 1:
@@ -25,13 +23,11 @@ export default function SidePane({
     }
   }, [scrollIndex]);
 
-  const containerRef = useRef<HTMLDivElement | null>(null);
   const elRefs = useRef<Array<HTMLElement | null>>([null, null, null]);
   const bulletsRef = useRef<Array<HTMLButtonElement | null>>([null, null, null]);
   const triggersRef = useRef<ScrollTrigger[]>([]);
-  // const [bulletPositions, setBulletPositions] = useState<number[]>([0, 0, 0]);
 
-  // create ScrollTriggers for element animations and bullet highlight
+  // Your existing GSAP animation logic
   useLayoutEffect(() => {
     triggersRef.current.forEach((t) => t.kill());
     triggersRef.current = [];
@@ -42,96 +38,155 @@ export default function SidePane({
     const totalScrollable = Math.max(1, document.body.scrollHeight - window.innerHeight);
     const segment = totalScrollable / totalSegments;
 
-    // Create triggers for all elements at once for each page segment
+    // Set initial state for all elements globally
+    nodes.forEach((el) => {
+      if (!el) return;
+      gsap.set(el, { opacity: 0, y: 20 });
+    });
+
+    // Set initial state for all bullets
+    bulletsRef.current.forEach((b, i) => {
+      if (!b) return;
+      gsap.set(b, { scale: 1, backgroundColor: "#7a7a7aff" });
+    });
+
+    // Create triggers for pages 1, 2, 3 (scrollIndex 1, 2, 3)
     [1, 2, 3].forEach((pageIndex) => {
       const startPx = Math.round(segment * pageIndex);
 
-      // Set initial state for all elements
-      nodes.forEach((el) => {
-        if (!el) return;
-        gsap.set(el, { opacity: 0, y: 20 });
-      });
-
       // Create trigger that shows/hides all elements
       const t = ScrollTrigger.create({
-        start: `${startPx}px top`,
-        end: `${startPx + 2}px top`,
+        start: `${startPx - 20}px top`,
+        end: pageIndex === 3 ? `${totalScrollable + 100}px top` : `${startPx + segment - 20}px top`,
         onEnter: () => {
+          // Immediately hide all elements first
           nodes.forEach((el) => {
             if (!el) return;
-            gsap.to(el, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" });
+            gsap.set(el, { opacity: 0, y: 20 });
+          });
+          // Then animate them in with stagger after a tiny delay
+          gsap.delayedCall(0.1, () => {
+            nodes.forEach((el, index) => {
+              if (!el) return;
+              gsap.to(el, {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: "power2.out",
+                delay: index * 0.15
+              });
+            });
           });
         },
         onEnterBack: () => {
+          // Immediately hide all elements first
           nodes.forEach((el) => {
             if (!el) return;
-            gsap.to(el, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" });
+            gsap.set(el, { opacity: 0, y: -20 });
+          });
+          // Then animate them in with stagger after a tiny delay
+          gsap.delayedCall(0.1, () => {
+            nodes.forEach((el, index) => {
+              if (!el) return;
+              gsap.to(el, {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: "power2.out",
+                delay: index * 0.15
+              });
+            });
           });
         },
         onLeave: () => {
-          nodes.forEach((el) => {
-            if (!el) return;
-            gsap.to(el, { opacity: 0, y: -10, duration: 0.35, ease: "power2.in" });
-          });
+          if (pageIndex !== 3) {
+            nodes.forEach((el, index) => {
+              if (!el) return;
+              gsap.to(el, {
+                opacity: 0,
+                y: -20,
+                duration: 0.6,
+                ease: "power2.in",
+                delay: index * 0.05
+              });
+            });
+          }
         },
         onLeaveBack: () => {
-          nodes.forEach((el) => {
+          nodes.forEach((el, index) => {
             if (!el) return;
-            gsap.to(el, { opacity: 0, y: 20, duration: 0.35, ease: "power2.in" });
+            gsap.to(el, {
+              opacity: 0,
+              y: 20,
+              duration: 0.6,
+              ease: "power2.in",
+              delay: index * 0.05
+            });
           });
         },
       });
       triggersRef.current.push(t);
 
-      // Create bullet highlight trigger
-      const b = bulletsRef.current[pageIndex - 1];
+      // Bullet highlight triggers
+      const bulletIndex = pageIndex - 1;
+      const b = bulletsRef.current[bulletIndex];
       if (b) {
-        gsap.set(b, { scale: 1, backgroundColor: "#7a7a7aff" });
         const bt = ScrollTrigger.create({
           start: `${startPx - 10}px top`,
-          end: `${startPx + 10}px top`,
-          onEnter: () => gsap.to(b, { scale: 1.4, backgroundColor: "#111", duration: 0.5 }),
-          onEnterBack: () => gsap.to(b, { scale: 1.4, backgroundColor: "#111", duration: 0.5 }),
-          onLeave: () => gsap.to(b, { scale: 1, backgroundColor: "#7a7a7aff", duration: 0.5 }),
-          onLeaveBack: () => gsap.to(b, { scale: 1, backgroundColor: "#7a7a7aff", duration: 0.5 }),
+          end: `${startPx + segment - 10}px top`,
+          onEnter: () => {
+            gsap.to(b, { scale: 1.4, backgroundColor: "#111", duration: 0.5 });
+            bulletsRef.current.forEach((otherB, otherIndex) => {
+              if (otherB && otherIndex !== bulletIndex) {
+                gsap.to(otherB, { scale: 1, backgroundColor: "#7a7a7aff", duration: 0.5 });
+              }
+            });
+          },
+          onEnterBack: () => {
+            gsap.to(b, { scale: 1.4, backgroundColor: "#111", duration: 0.5 });
+            bulletsRef.current.forEach((otherB, otherIndex) => {
+              if (otherB && otherIndex !== bulletIndex) {
+                gsap.to(otherB, { scale: 1, backgroundColor: "#7a7a7aff", duration: 0.5 });
+              }
+            });
+          },
+          onLeave: () => {
+            if (bulletIndex < 2) {
+              gsap.to(b, { scale: 1, backgroundColor: "#7a7a7aff", duration: 0.5 });
+            }
+          },
+          onLeaveBack: () => {
+            gsap.to(b, { scale: 1, backgroundColor: "#7a7a7aff", duration: 0.5 });
+          },
         });
         triggersRef.current.push(bt);
       }
     });
 
+    // Special trigger for scrollIndex 0 to 1 transition
+    const firstBullet = bulletsRef.current[0];
+    if (firstBullet) {
+      const firstPageStart = Math.round(segment * 1);
+      const transitionTrigger = ScrollTrigger.create({
+        start: `${firstPageStart - 50}px top`,
+        end: `${firstPageStart + 10}px top`,
+        onEnter: () => {
+          gsap.to(firstBullet, { scale: 1.4, backgroundColor: "#111", duration: 0.5 });
+        },
+        onLeaveBack: () => {
+          gsap.to(firstBullet, { scale: 1, backgroundColor: "#7a7a7aff", duration: 0.5 });
+        },
+      });
+      triggersRef.current.push(transitionTrigger);
+    }
+
     return () => {
       triggersRef.current.forEach((tr) => tr.kill());
       triggersRef.current = [];
     };
-  }, []); // run once on mount
+  }, []);
 
-  // recompute bullet vertical positions so each bullet is vertically centered on its element
-  useLayoutEffect(() => {
-    let raf = 0;
-    const measure = () => {
-      const container = containerRef.current;
-      // compute positions: center Y in viewport coordinates for each elRef
-      const positions = elRefs.current.map((el) => {
-        if (!el) return -9999;
-        const r = el.getBoundingClientRect();
-        // center Y in viewport coordinates
-        return Math.round(r.top + r.height / 2);
-      });
-      // setBulletPositions(positions);
-    };
-
-    // initial measure + update on scroll/resize
-    raf = requestAnimationFrame(measure);
-    window.addEventListener("resize", measure);
-    window.addEventListener("scroll", measure, { passive: true });
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", measure);
-      window.removeEventListener("scroll", measure);
-    };
-  }, [scrollIndex]); // re-measure when scrollIndex (content) changes
-
-  // ensure bullets visually reflect current scrollIndex immediately when prop changes
+  // Ensure bullets reflect current scrollIndex
   useLayoutEffect(() => {
     bulletsRef.current.forEach((b, i) => {
       if (!b) return;
@@ -140,40 +195,29 @@ export default function SidePane({
     });
   }, [scrollIndex]);
 
-  // scroll to segment when clicking a bullet
+  // Handle bullet click using store action - much cleaner!
   const handleBulletClick = (index: number) => {
-    const slidesCount = elRefs.current.length;
-    const totalSegments = slidesCount + 1;
-    const totalScrollable = Math.max(1, document.body.scrollHeight - window.innerHeight);
-    const segment = totalScrollable / totalSegments;
-    const pageIndex = index + 1;
-    const targetY = Math.round(segment * pageIndex);
-    window.scrollTo({ top: targetY, behavior: "smooth" });
-    if (onSelect) onSelect(pageIndex);
+    goToSection(index + 1);
   };
 
   return (
-    <>
-      {/* Content blocks without buttons */}
+    <div className="fixed top-[30%] right-0 -translate-y-[30%] flex items-center w-[30vw]">
       <div className="flex-grow">
-        <h1 ref={(el) => { (elRefs.current[0] = el) }} className="text-5xl text-black font-semibold ">
+        <h1 ref={(el) => { (elRefs.current[0] = el) }} className="text-5xl text-black font-semibold">
           {texts[0]}
         </h1>
-
         <strong ref={(el) => { (elRefs.current[1] = el) }} className="text-xs block text-gray-700 mb-8">
           {texts[1]}
         </strong>
-
         <div ref={(el) => { (elRefs.current[2] = el) }} className="text-md text-gray-500 font-medium">
           <span>{texts[2]}</span>
-          <br />
-          <br />
-          <a href="https://www.google.com" target="_blank" rel="noreferrer">
+          <br /><br />
+          <a href="https://www.google.com" target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800 underline transition-colors duration-200">
             Learn more
           </a>
         </div>
       </div>
-      {/* Separate buttons container */}
+
       <div className="flex flex-col gap-3 items-center w-3 mr-3">
         {[0, 1, 2].map((i) => (
           <button
@@ -181,17 +225,14 @@ export default function SidePane({
             ref={(b) => { (bulletsRef.current[i] = b) }}
             onClick={() => handleBulletClick(i)}
             aria-label={`Go to item ${i + 1}`}
+            className="w-2.5 h-2.5 rounded-full border-0 p-0 cursor-pointer transition-all duration-500"
             style={{
-              width: 10,
-              height: 10,
-              borderRadius: "50%",
-              cursor: "pointer",
               background: scrollIndex === i + 1 ? "#111" : "#7a7a7aff",
               transform: scrollIndex === i + 1 ? "scale(1.4)" : "scale(1)",
             }}
           />
         ))}
       </div>
-    </>
+    </div>
   );
 }

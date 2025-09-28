@@ -1,48 +1,18 @@
-export default function AboutStage({
-}: {
-    }) {
-    return (
-        <>
-            <div
-                style={{
-                    // position: 'absolute',
-                    // left: 0,
-                    // top: 0,
-                    marginTop: '100vh',
-                    width: '100vw',
-                    height: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    // background: '#fafafa',
-                    color: '#222',
-                    // zIndex: 3,
-                    // opacity: 1,
-                    pointerEvents: 'auto',
-                    transition: 'opacity 0.7s cubic-bezier(.77,0,.18,1)',
-                }}
-            >
-                <div>
-
-                    <h2 style={{ fontSize: 12, marginLeft: '5px' }}>About</h2>
-                    <p style={{ maxWidth: 500, textAlign: 'center', margin: '1rem 0', fontSize: 52 }}>
-                        I create Architecture design & Software
-                    </p>
-                </div>
-                <div style={{
-                    position: 'absolute',
-                    bottom: 32,
-                    left: 0,
-                    width: '100%',
-                    textAlign: 'center',
-                    color: '#888',
-                    fontSize: 14
-                }}>
-                    <span>Scroll down to continue</span>
-                </div>
-            </div >
-
-        </>
-    )
+export default function About() {
+  return (
+    <div className="fixed top-[-50%] h-screen flex flex-col items-center justify-center">
+      <div className="mt-[100vh] w-screen h-screen flex flex-col items-center justify-center text-gray-800 pointer-events-auto transition-opacity duration-700 ease-[cubic-bezier(.77,0,.18,1)]">
+        <div>
+          <h2 className="text-xs ml-1">About</h2>
+          <p className="max-w-[500px] text-center mx-0 my-4 text-[52px] leading-tight">
+            I create Architecture design & Software
+          </p>
+        </div>
+        
+        <div className="absolute bottom-8 left-0 w-full text-center text-gray-500 text-sm">
+          <span>Scroll down to continue</span>
+        </div>
+      </div>
+    </div>
+  );
 }
