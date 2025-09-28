@@ -1,4 +1,3 @@
-import React from 'react';
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
@@ -12,7 +11,7 @@ interface ScrollStore {
   
   // Actions
   setScrollData: (data: { scrollIndex: number; scrollProgress: number; activeScene: number }) => void;
-  setTotalSections: (total: number) => void;
+  setSectionCount: (total: number) => void;
   setIntro: (intro: boolean) => void;
   goToSection: (index: number) => void;
   
@@ -34,7 +33,7 @@ export const useScrollStore = create<ScrollStore>()(
     // Actions
     setScrollData: (data) => set(data),
     
-    setTotalSections: (total) => set({ totalSections: total }),
+    setSectionCount: (total) => set({ totalSections: total }),
     
     setIntro: (intro) => set({ isIntro: intro }),
     
@@ -63,37 +62,3 @@ export const useScrollStore = create<ScrollStore>()(
     _setScrolling: (scrolling) => set({ _isScrolling: scrolling }),
   }))
 );
-
-// Custom hook for scroll behavior setup
-export const useScrollBehavior = () => {
-  const { isIntro, totalSections, setScrollData } = useScrollStore();
-
-  React.useEffect(() => {
-    if (isIntro) return;
-
-    const handleScroll = () => {
-      const totalSegments = totalSections + 1;
-      const totalScrollable = document.body.scrollHeight - window.innerHeight;
-      const scrollY = window.scrollY;
-      const segment = totalScrollable / totalSegments;
-      const raw = scrollY / segment;
-      
-      let index = Math.floor(raw);
-      if (index < 0) index = 0;
-      if (index > totalSections) index = totalSections;
-
-      const progress = Math.min(1, Math.max(0, raw - index));
-      
-      setScrollData({
-        scrollIndex: index,
-        scrollProgress: progress,
-        activeScene: index - 1,
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initialize
-    
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isIntro, totalSections, setScrollData]);
-};

@@ -1,18 +1,99 @@
-export default function About() {
+"use client";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+
+interface AboutProps {
+  isInitialLoad?: boolean;
+  onContinue?: () => void;
+}
+
+export default function About({ isInitialLoad = false, onContinue }: AboutProps) {
+  const textRef = useRef<HTMLParagraphElement>(null);
+  const divRef = useRef<HTMLDivElement>(null);
+  const spanRef = useRef<HTMLSpanElement>(null);
+  const [clickEnabled, setClickEnabled] = useState(false);
+
+  useEffect(() => {
+    if (isInitialLoad && textRef.current && spanRef.current) {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          setClickEnabled(true);
+
+          // Start loop animation on span after it fully appears
+          gsap.to(spanRef.current, {
+            opacity: 0.3,
+            duration: 1,
+            repeat: -1,
+            yoyo: true,
+            ease: "power1.inOut",
+          });
+        },
+      });
+
+      tl.fromTo(
+        textRef.current,
+        { y: 200, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.5,
+          ease: "power2.out",
+        }
+      ).fromTo(
+        spanRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 1.5,
+          ease: "power2.out",
+          delay: 1.5,
+        },
+        "-=1.5"
+      );
+    }
+  }, [isInitialLoad]);
+
+  const handleClick = () => {
+    if (!clickEnabled) return;
+
+    const tl = gsap.timeline({ onComplete: onContinue });
+
+    tl.to(textRef.current, {
+      y: 300,
+      opacity: 0,
+      duration: 1,
+      ease: "power2.in",
+    }).to(divRef.current, {
+      opacity: 0,
+      duration: 0.8,
+      ease: "power2.in",
+    });
+  };
+
   return (
-    <div className="fixed top-[-50%] h-screen flex flex-col items-center justify-center">
-      <div className="mt-[100vh] w-screen h-screen flex flex-col items-center justify-center text-gray-800 pointer-events-auto transition-opacity duration-700 ease-[cubic-bezier(.77,0,.18,1)]">
-        <div>
-          <h2 className="text-xs ml-1">About</h2>
-          <p className="max-w-[500px] text-center mx-0 my-4 text-[52px] leading-tight">
+    <>
+      {isInitialLoad && (
+        <div
+          ref={divRef}
+          className={`fixed w-screen h-screen flex flex-col items-center justify-center bg-orange-200/70 ${
+            clickEnabled ? "cursor-pointer" : ""
+          }`}
+          onClick={handleClick}
+        >
+          <p
+            ref={textRef}
+            className="max-w-[700px] text-center mx-0 text-[64px] leading-tight text-gray-800 font-semibold"
+          >
             I create Architecture design & Software
           </p>
+          <span
+            ref={spanRef}
+            className="w-full text-center text-gray-700 text-lg"
+          >
+            Click anywhere to continue
+          </span>
         </div>
-        
-        <div className="absolute bottom-8 left-0 w-full text-center text-gray-500 text-sm">
-          <span>Scroll down to continue</span>
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }

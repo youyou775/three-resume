@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { applyMats, extractTexturePaths, loadTextures } from '../utils/applyMats';
 
-export function useGLTFAssets() {
+export function GLTFAssetLoader() {
     const SCENE_PATHS = ['/Scene.glb', '/Scene.001.glb', '/Scene.002.glb'];
     // Load all GLTFs
     const gltfs = SCENE_PATHS.map((path) => useGLTF(path, true));
