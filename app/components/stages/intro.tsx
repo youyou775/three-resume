@@ -1,6 +1,6 @@
 
 
-export default function IntroStage({
+export default function Intro({
     onClick
 }: {
     onClick: any
