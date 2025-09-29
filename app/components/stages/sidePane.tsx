@@ -12,13 +12,42 @@ export default function SidePane() {
   const texts = useMemo(() => {
     switch (scrollIndex) {
       case 1:
-        return ["FISERV", "Financial Services", "Worked on project DNA"];
+        return {
+          title: "FISERV",
+          subtitle: "Senior Full Stack Developer | Jan 2024 - Present",
+          bullets: [
+            "Maintained from scratch in 2 whole front-end projects that rely on angular to serve more than a hundred banks",
+            "Secondarily worked on redis and graphql systems to serve the projects", 
+            "Contributed in change of old WinForms and .Net 4.8 stack to a new .Net 8.0, Redis and Angular stack",
+            "Maintained GraphQl connections in a mega project, along with Postgres on the smaller one",
+            "Managed a small team of 3 people"
+          ]
+        };
       case 2:
-        return ["CONIX", "Computational Design & development", "Worked on project DNA"];
+        return {
+          title: "CONIX",
+          subtitle: "Senior Full Stack Developer / Computational Designer | Jul 2021 – Jan 2024",
+          bullets: [
+            "Switched to Angular/React and Node.js to improve scalability, increasing deployment efficiency by 50%",
+            "Managed DevOps through GoDaddy and then Cloudflare, reducing costs by 33%",
+            "Wrote database using MYSQL migrating from MSSQL",
+            "Secured $1.2 million in funding and reduced design time by over 90% through AI development",
+            "Deployed our stack on AWS, serving over 1000 users",
+            "Currently managing a team of computational designers and developers",
+            "The full result is at www.conix.ai (you can operate the AI)"
+          ]
+        };
       case 3:
-        return ["MODERN ACADEMY", "Architecture school", "Worked on project DNA"];
+        return {
+          title: "MODERN ACADEMY",
+          subtitle: "Bachelor's Degree in Architecture | Sep 2012 – Jun 2017",
+          bullets: [
+            "Graduated with a B+ average (above 80%). Demonstrated creative computational design skills",
+            "Conducted innovative research and implemented new systems. Developed concepts using beginner C++"
+          ]
+        };
       default:
-        return ["", "", ""];
+        return { title: "", subtitle: "", bullets: [] };
     }
   }, [scrollIndex]);
 
@@ -50,7 +79,7 @@ export default function SidePane() {
       gsap.to(el, {
         y: direction === "up" ? -20 : 20,
         opacity: 0,
-        duration: 0.5, // disappear in 0.5s
+        duration: 0.5,
         ease: "power2.in",
         delay: index * 0.1,
       });
@@ -126,7 +155,7 @@ export default function SidePane() {
         start: `${firstPageStart - 50}px top`,
         end: `${firstPageStart + 10}px top`,
         onEnter: () => highlightBullet(0),
-        onLeaveBack: () => highlightBullet(-1), // none active
+        onLeaveBack: () => highlightBullet(-1),
       });
       triggersRef.current.push(transitionTrigger);
     }
@@ -149,44 +178,54 @@ export default function SidePane() {
 
   return (
     <div className="fixed top-[30%] right-0 -translate-y-[30%] flex items-center w-[30vw]">
-      <div className="flex-grow">
+      <div className="flex-grow pr-8">
         <h1
           ref={(el) => {
             elRefs.current[0] = el;
           }}
-          className="text-5xl text-black font-semibold"
+          className="text-5xl text-black font-semibold mb-4"
         >
-          {texts[0]}
+          {texts.title}
         </h1>
         <strong
           ref={(el) => {
             elRefs.current[1] = el;
           }}
-          className="text-xs block text-gray-700 mb-8"
+          className="text-sm block text-gray-700 mb-6 font-medium"
         >
-          {texts[1]}
+          {texts.subtitle}
         </strong>
         <div
           ref={(el) => {
             elRefs.current[2] = el;
           }}
-          className="text-md text-gray-500 font-medium"
+          className="text-sm text-gray-600 leading-relaxed"
         >
-          <span>{texts[2]}</span>
-          <br />
-          <br />
-          <a
-            href="https://www.google.com"
-            target="_blank"
-            rel="noreferrer"
-            className="text-blue-600 hover:text-blue-800 underline transition-colors duration-200"
-          >
-            Learn more
-          </a>
+          <ul className="space-y-3">
+            {texts.bullets.map((bullet, index) => (
+              <li key={index} className="flex items-start">
+                <span className="text-gray-400 mr-3 mt-1 text-xs">•</span>
+                <span className="flex-1">{bullet}</span>
+              </li>
+            ))}
+          </ul>
+          
+          {/* {texts.title && (
+            <div className="mt-6">
+              <a
+                href="https://www.google.com"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline transition-colors duration-200 text-sm"
+              >
+                Learn more
+              </a>
+            </div>
+          )} */}
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 items-center w-3 mr-3">
+      <div className="flex flex-col gap-3 items-center w-3">
         {[0, 1, 2].map((i) => (
           <button
             key={i}
@@ -195,7 +234,7 @@ export default function SidePane() {
             }}
             onClick={() => handleBulletClick(i)}
             aria-label={`Go to item ${i + 1}`}
-            className="w-2.5 h-2.5 rounded-full border-0 p-0 cursor-pointer transition-all duration-500"
+            className="w-2.5 h-2.5 rounded-full border-0 p-0 cursor-pointer transition-all duration-500 bg-gray-400"
           />
         ))}
       </div>

@@ -1,3 +1,5 @@
 Design
 - https://orpetron.com/blog/10-award-winning-projects-showcasing-three-js-innovation/
 - https://www.str8fire.io/
+animation
+- https://www.youtube.com/watch?v=O2ouLOL6C4c

@@ -3,7 +3,15 @@ import { useGLTF } from '@react-three/drei';
 import { applyMats, extractTexturePaths, loadTextures } from '../utils/applyMats';
 
 export function GLTFAssetLoader() {
-    const SCENE_PATHS = ['/Scene.glb', '/Scene.001.glb', '/Scene.002.glb'];
+    // Simple base path handling for GitHub Pages
+    const basePath = process.env.NODE_ENV === 'production' ? '/three-resume' : '';
+    
+    const SCENE_PATHS = [
+        `${basePath}/Scene.glb`,
+        `${basePath}/Scene.001.glb`, 
+        `${basePath}/Scene.002.glb`
+    ];
+
     // Load all GLTFs
     const gltfs = SCENE_PATHS.map((path) => useGLTF(path, true));
     const [ready, setReady] = useState(false);
@@ -15,7 +23,6 @@ export function GLTFAssetLoader() {
             applyMats(gltf.scene, loadedTextures);
         });
         setReady(true);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gltfs.length]);
 
     return { gltfs, ready };

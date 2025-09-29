@@ -1,15 +1,21 @@
 import * as THREE from 'three';
 
+// Helper function to get the correct asset path
+const getAssetPath = (path: string) => {
+  const basePath = process.env.NODE_ENV === 'production' ? '/three-resume' : '';
+  return `${basePath}${path}`;
+};
 
 export function extractTexturePaths(scene: THREE.Group<THREE.Object3DEventMap>): Record<string, string> {
   const textures: Record<string, string> = {};
   scene.traverse(obj => {
     if (obj instanceof THREE.Mesh && obj.userData.collection) {
-      textures[obj.userData.collection] = `/${obj.userData.collection}.webp`;
+      textures[obj.userData.collection] = getAssetPath(`/${obj.userData.collection}.webp`);
     }
   });
   return textures;
 }
+
 export function loadTextures(textures: Record<string, string>): Record<string, THREE.Texture> {
   const textureLoader = new THREE.TextureLoader();
   return Object.fromEntries(
@@ -21,8 +27,9 @@ export function loadTextures(textures: Record<string, string>): Record<string, T
     })
   );
 }
+
 export function applyMats(
-  scene:THREE.Group<THREE.Object3DEventMap>,
+  scene: THREE.Group<THREE.Object3DEventMap>,
   loadedTextures: Record<string, THREE.Texture>
 ) {
   scene.traverse((obj) => {
@@ -36,7 +43,7 @@ export function applyMats(
         });
       } else if (obj.name.includes("Screen")) {
         const video = document.createElement('video');
-        video.src = '/video.mp4';
+        video.src = getAssetPath('/video.mp4'); // Apply base path to video too
         video.crossOrigin = 'anonymous';
         video.loop = true;
         video.muted = true;

@@ -6,12 +6,14 @@ import * as THREE from "three";
 export function CameraTweener({
   cameraA,
   cameraB,
+  cameraC, // Contact camera
   progress,
   controlsRef,
   scrollIndex,
 }: {
   cameraA: { position: [number, number, number]; fov?: number; lookAt: [number, number, number] };
   cameraB: { position: [number, number, number]; fov?: number; lookAt: [number, number, number] };
+  cameraC: { position: [number, number, number]; fov?: number; lookAt: [number, number, number] };
   progress: number;
   controlsRef: React.RefObject<any>;
   scrollIndex: number;
@@ -20,15 +22,40 @@ export function CameraTweener({
 
   const vA = useMemo(() => new THREE.Vector3(), []);
   const vB = useMemo(() => new THREE.Vector3(), []);
+  const vC = useMemo(() => new THREE.Vector3(), []);
   const vOut = useMemo(() => new THREE.Vector3(), []);
   const tA = useMemo(() => new THREE.Vector3(), []);
   const tB = useMemo(() => new THREE.Vector3(), []);
+  const tC = useMemo(() => new THREE.Vector3(), []);
   const tOut = useMemo(() => new THREE.Vector3(), []);
 
   useFrame(() => {
-    if (!cameraA || !cameraB) return;
+    if (!cameraA || !cameraB || !cameraC) return;
 
-    if (scrollIndex !== 0) {
+    // Handle different scroll index scenarios
+    if (scrollIndex === 0) {
+      // scrollIndex 0: About page - animate from A to B
+      const p = THREE.MathUtils.clamp(progress, 0, 1);
+
+      vA.fromArray(cameraA.position);
+      vB.fromArray(cameraB.position);
+      vOut.lerpVectors(vA, vB, p);
+      camera.position.copy(vOut);
+
+      tA.fromArray(cameraA.lookAt);
+      tB.fromArray(cameraB.lookAt);
+      tOut.lerpVectors(tA, tB, p);
+      controlsRef.current?.target.copy(tOut);
+      controlsRef.current?.update();
+
+      if (camera instanceof THREE.PerspectiveCamera) {
+        const fA = cameraA.fov ?? camera.fov;
+        const fB = cameraB.fov ?? camera.fov;
+        camera.fov = THREE.MathUtils.lerp(fA, fB, p);
+        camera.updateProjectionMatrix();
+      }
+    } else if (scrollIndex >= 1 && scrollIndex <= 3) {
+      // scrollIndex 1-3: SidePane sections - stay at cameraB
       camera.position.set(...cameraB.position);
       tOut.set(...cameraB.lookAt);
       controlsRef.current?.target.copy(tOut);
@@ -37,27 +64,27 @@ export function CameraTweener({
         camera.fov = cameraB.fov;
         camera.updateProjectionMatrix();
       }
-      return;
-    }
+    } else if (scrollIndex === 4) {
+      // scrollIndex 4: Contact page - animate from B to C
+      const p = THREE.MathUtils.clamp(progress, 0, 1);
 
-    const p = THREE.MathUtils.clamp(progress, 0, 1);
+      vB.fromArray(cameraB.position);
+      vC.fromArray(cameraC.position);
+      vOut.lerpVectors(vB, vC, p);
+      camera.position.copy(vOut);
 
-    vA.fromArray(cameraA.position);
-    vB.fromArray(cameraB.position);
-    vOut.lerpVectors(vA, vB, p);
-    camera.position.copy(vOut);
+      tB.fromArray(cameraB.lookAt);
+      tC.fromArray(cameraC.lookAt);
+      tOut.lerpVectors(tB, tC, p);
+      controlsRef.current?.target.copy(tOut);
+      controlsRef.current?.update();
 
-    tA.fromArray(cameraA.lookAt);
-    tB.fromArray(cameraB.lookAt);
-    tOut.lerpVectors(tA, tB, p);
-    controlsRef.current?.target.copy(tOut);
-    controlsRef.current?.update();
-
-    if (camera instanceof THREE.PerspectiveCamera) {
-      const fA = cameraA.fov ?? camera.fov;
-      const fB = cameraB.fov ?? camera.fov;
-      camera.fov = THREE.MathUtils.lerp(fA, fB, p);
-      camera.updateProjectionMatrix();
+      if (camera instanceof THREE.PerspectiveCamera) {
+        const fB = cameraB.fov ?? camera.fov;
+        const fC = cameraC.fov ?? camera.fov;
+        camera.fov = THREE.MathUtils.lerp(fB, fC, p);
+        camera.updateProjectionMatrix();
+      }
     }
   });
 

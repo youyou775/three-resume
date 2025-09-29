@@ -21,7 +21,10 @@ export default function Three({
   // Get current GLTF based on scrollIndex
   const currentGltf = useMemo(() => {
     if (!gltfs.length) return null;
-    return gltfs[scrollIndex === 0 ? 0 : Math.max(0, scrollIndex - 1)];
+    // For scrollIndex 0 (about) and 4 (contact), use the first GLTF
+    if (scrollIndex === 0) return gltfs[0] || null;
+    // For other sections, use the appropriate GLTF
+    return gltfs[Math.max(0, Math.min(scrollIndex - 1, gltfs.length - 1))];
   }, [gltfs, scrollIndex]);
 
   // Camera configurations
@@ -36,13 +39,18 @@ export default function Three({
       return {
         position: [11.118, 2.794, 7.675] as [number, number, number],
         lookAt: [1.364, 2.331, -2.716] as [number, number, number],
-        // position: [10.317, 5.071, 21.083] as [number, number, number],
-        // lookAt: [9.977, 4.985, 20.147] as [number, number, number],
         fov: aboutCamera.fov,
       };
     }
     return aboutCamera;
   }, [currentGltf, aboutCamera]);
+
+  // Contact camera - different angle for contact page
+  const contactCamera = useMemo(() => ({
+    position: [2.5, 6.0, 12.0] as [number, number, number],
+    lookAt: [0.0, 3.0, 0.0] as [number, number, number],
+    fov: 40,
+  }), []);
 
   const camera = useMemo(
     () => new THREE.PerspectiveCamera(aboutCamera.fov, 1, 0.1, 1000),
@@ -62,7 +70,6 @@ export default function Three({
       <div className="fixed w-screen h-screen">
         <div className="text-white bg-gray-900 w-screen h-screen flex items-center justify-center">
           <div className="flex flex-col items-center">
-            {/* Loading spinner */}
             <div className="w-12 h-12 border-4 border-gray-600 border-t-white rounded-full animate-spin mb-4"></div>
             <p>Loading 3D assets...</p>
           </div>
@@ -80,7 +87,7 @@ export default function Three({
         onPointerDown={(event: any) => raycast(event, currentGltf, raycastClick)}
         className="w-full h-full transition-opacity duration-700 ease-[cubic-bezier(.77,0,.18,1)]"
         style={{
-          pointerEvents: scrollIndex > 0 ? "auto" : "none",
+          pointerEvents: (scrollIndex > 0 && scrollIndex < 4) ? "auto" : "none",
           background: "var(--background, #fff)",
         }}
       >
@@ -90,6 +97,7 @@ export default function Three({
           <CameraTweener
             cameraA={aboutCamera}
             cameraB={modelCamera}
+            cameraC={contactCamera}
             progress={progress}
             controlsRef={controlsRef}
             scrollIndex={scrollIndex}
