@@ -16,26 +16,27 @@ export default function SidePane() {
           title: "FISERV",
           subtitle: "Senior Full Stack Developer | Jan 2024 - Present",
           bullets: [
-            "Maintained from scratch in 2 whole front-end projects that rely on angular to serve more than a hundred banks",
-            "Secondarily worked on redis and graphql systems to serve the projects", 
-            "Contributed in change of old WinForms and .Net 4.8 stack to a new .Net 8.0, Redis and Angular stack",
-            "Maintained GraphQl connections in a mega project, along with Postgres on the smaller one",
-            "Managed a small team of 3 people"
-          ]
+            "Maintained 2 front-end projects from beginning to end. Relying on angular to serve more than a hundred banks",
+            "Contributed in change of legacy WinForms .Net 4.8 stack to a new C# .Net 8.0 and Angular stack",
+            "On the back-end used GraphQl connections in a mega project, along with Postgres on the smaller one",
+            "Mentored and co-managed 6 junior developers",
+            "Worked in an Agile environment with 2 week sprints, daily standups, and bi-weekly retrospectives",
+          ],
+          tech: ['C#', '.Net 8.0', 'Angular', 'GraphQL', 'Postgres', 'Azure DevOps', 'Bitbucket', 'Jira', 'Postgres', 'MSSQL']
         };
       case 2:
         return {
           title: "CONIX",
           subtitle: "Senior Full Stack Developer / Computational Designer | Jul 2021 – Jan 2024",
           bullets: [
-            "Switched to Angular/React and Node.js to improve scalability, increasing deployment efficiency by 50%",
-            "Managed DevOps through GoDaddy and then Cloudflare, reducing costs by 33%",
+            "Switched to Angular/React and Node.js to improve scalability. Increased deployment efficiency by 50%",
+            "Managed DevOps through GoDaddy then Cloudflare, reducing costs by 33%",
             "Wrote database using MYSQL migrating from MSSQL",
-            "Secured $1.2 million in funding and reduced design time by over 90% through AI development",
-            "Deployed our stack on AWS, serving over 1000 users",
-            "Currently managing a team of computational designers and developers",
-            "The full result is at www.conix.ai (you can operate the AI)"
-          ]
+            "Secured $1.2 million in funding. While reduced design time by over 90% through AI development",
+            "Deployed stacks on AWS, serving over 1000 users",
+            "Managed a team of 3 computational designers/developers"
+          ],
+          tech: ['Node.js', 'React', 'Angular', 'Three.js', 'AWS', 'MYSQL', 'MSSQL', 'GoDaddy', 'Cloudflare', 'Docker', 'Rhino', 'Grasshopper', 'Python', 'C++']
         };
       case 3:
         return {
@@ -44,7 +45,8 @@ export default function SidePane() {
           bullets: [
             "Graduated with a B+ average (above 80%). Demonstrated creative computational design skills",
             "Conducted innovative research and implemented new systems. Developed concepts using beginner C++"
-          ]
+          ],
+          tech: ['AutoCAD', '3ds Max', 'Vray', 'Photoshop', 'Illustrator', 'InDesign', 'Premiere Pro', 'Grasshopper', 'C++']
         };
       default:
         return { title: "", subtitle: "", bullets: [] };
@@ -209,23 +211,22 @@ export default function SidePane() {
               </li>
             ))}
           </ul>
-          
-          {/* {texts.title && (
-            <div className="mt-6">
-              <a
-                href="https://www.google.com"
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-600 hover:text-blue-800 underline transition-colors duration-200 text-sm"
-              >
-                Learn more
-              </a>
-            </div>
-          )} */}
+
+          <div className="flex flex-wrap gap-2 mt-12">
+            {texts.tech && texts.tech.map((tech, index) => (
+              <div key={index} className="bg-gray-400 rounded-xl px-2">
+                <p className="italic text-gray-900">
+                  {tech}
+                </p>
+
+              </div>
+            ))}
+
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 items-center w-3">
+      <div className="flex flex-col gap-3 items-center w-3 mr-6">
         {[0, 1, 2].map((i) => (
           <button
             key={i}

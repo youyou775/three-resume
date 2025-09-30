@@ -12,31 +12,32 @@ export default function SidePaneMobile() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isUserSwiping = useRef(false);
-  
+
   const slides = useMemo(() => [
     {
       title: "FISERV",
       subtitle: "Senior Full Stack Developer | Jan 2024 - Present",
       bullets: [
-        "Maintained from scratch in 2 whole front-end projects that rely on angular to serve more than a hundred banks",
-        "Secondarily worked on redis and graphql systems to serve the projects", 
-        "Contributed in change of old WinForms and .Net 4.8 stack to a new .Net 8.0, Redis and Angular stack",
-        "Maintained GraphQl connections in a mega project, along with Postgres on the smaller one",
-        "Managed a small team of 3 people"
-      ]
+        "Maintained 2 front-end projects from beginning to end. Relying on angular to serve more than a hundred banks",
+        "Contributed in change of legacy WinForms .Net 4.8 stack to a new C# .Net 8.0 and Angular stack",
+        "On the back-end used GraphQl connections in a mega project, along with Postgres on the smaller one",
+        "Mentored and co-managed 6 junior developers",
+        "Worked in an Agile environment with 2 week sprints, daily standups, and bi-weekly retrospectives",
+      ],
+      tech: ['C#', '.Net 8.0', 'Angular', 'GraphQL', 'Postgres', 'Azure DevOps', 'Bitbucket', 'Jira', 'Postgres', 'MSSQL']
     },
     {
       title: "CONIX",
       subtitle: "Senior Full Stack Developer / Computational Designer | Jul 2021 – Jan 2024",
       bullets: [
-        "Switched to Angular/React and Node.js to improve scalability, increasing deployment efficiency by 50%",
-        "Managed DevOps through GoDaddy and then Cloudflare, reducing costs by 33%",
+        "Switched to Angular/React and Node.js to improve scalability. Increased deployment efficiency by 50%",
+        "Managed DevOps through GoDaddy then Cloudflare, reducing costs by 33%",
         "Wrote database using MYSQL migrating from MSSQL",
-        "Secured $1.2 million in funding and reduced design time by over 90% through AI development",
-        "Deployed our stack on AWS, serving over 1000 users",
-        "Currently managing a team of computational designers and developers",
-        "The full result is at www.conix.ai (you can operate the AI)"
-      ]
+        "Secured $1.2 million in funding. While reduced design time by over 90% through AI development",
+        "Deployed stacks on AWS, serving over 1000 users",
+        "Managed a team of 3 computational designers/developers"
+      ],
+      tech: ['Node.js', 'React', 'Angular', 'Three.js', 'AWS', 'MYSQL', 'MSSQL', 'GoDaddy', 'Cloudflare', 'Docker', 'Rhino', 'Grasshopper', 'Python', 'C++']
     },
     {
       title: "MODERN ACADEMY",
@@ -44,7 +45,8 @@ export default function SidePaneMobile() {
       bullets: [
         "Graduated with a B+ average (above 80%). Demonstrated creative computational design skills",
         "Conducted innovative research and implemented new systems. Developed concepts using beginner C++"
-      ]
+      ],
+      tech: ['AutoCAD', '3ds Max', 'Vray', 'Photoshop', 'Illustrator', 'InDesign', 'Premiere Pro', 'Grasshopper', 'C++']
     }
   ], []);
 
@@ -60,7 +62,7 @@ export default function SidePaneMobile() {
     if (!carouselRef.current) return;
 
     gsap.to(carouselRef.current, {
-      x: -(currentSlide * (100/3)) + "%",
+      x: -(currentSlide * (100 / 3)) + "%",
       duration: 0.6,
       ease: "power2.out"
     });
@@ -84,7 +86,7 @@ export default function SidePaneMobile() {
       if (!isDragging) return;
       currentX = e.touches[0].clientX;
       const diffX = startX - currentX;
-      
+
       // Prevent default scroll if horizontal swipe detected
       if (Math.abs(diffX) > 20) {
         e.preventDefault();
@@ -93,7 +95,7 @@ export default function SidePaneMobile() {
 
     const handleTouchEnd = () => {
       if (!isDragging) return;
-      
+
       const diffX = startX - currentX;
       const threshold = 50;
 
@@ -136,7 +138,7 @@ export default function SidePaneMobile() {
   };
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="fixed bottom-0 w-screen h-1/2 bg-white border-t border-gray-200 overflow-hidden"
     >
@@ -147,18 +149,18 @@ export default function SidePaneMobile() {
         style={{ width: '300%' }}
       >
         {slides.map((slide, index) => (
-          <div 
+          <div
             key={index}
             className="w-1/3 h-full p-6 flex flex-col justify-start overflow-y-auto"
           >
             <h1 className="text-3xl font-bold text-black mb-2">
               {slide.title}
             </h1>
-            
+
             <p className="text-xs text-gray-600 mb-4 font-medium">
               {slide.subtitle}
             </p>
-            
+
             <div className="flex-1 overflow-y-auto">
               <ul className="space-y-2">
                 {slide.bullets.map((bullet, bulletIndex) => (
@@ -170,6 +172,17 @@ export default function SidePaneMobile() {
                   </li>
                 ))}
               </ul>
+              <div className="flex flex-wrap gap-2 mt-6">
+                {slide.tech && slide.tech.map((tech, index) => (
+                  <div key={index} className="bg-gray-400 rounded-xl p-0.5 px-1.5">
+                    <p className="italic text-gray-900 text-xs">
+                      {tech}
+                    </p>
+
+                  </div>
+                ))}
+
+              </div>
             </div>
           </div>
         ))}
@@ -181,9 +194,8 @@ export default function SidePaneMobile() {
           <button
             key={i}
             onClick={() => handleSlideChange(i)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              currentSlide === i ? 'bg-black scale-125' : 'bg-gray-400'
-            }`}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${currentSlide === i ? 'bg-black scale-125' : 'bg-gray-400'
+              }`}
             aria-label={`Go to slide ${i + 1}`}
           />
         ))}
@@ -193,20 +205,18 @@ export default function SidePaneMobile() {
       <button
         onClick={() => handleSlideChange(Math.max(0, currentSlide - 1))}
         disabled={currentSlide === 0}
-        className={`absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full z-10 ${
-          currentSlide === 0 ? 'text-gray-300' : 'text-gray-600 hover:text-black'
-        } transition-colors`}
+        className={`absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full z-10 ${currentSlide === 0 ? 'text-gray-300' : 'text-gray-600 hover:text-black'
+          } transition-colors`}
         aria-label="Previous slide"
       >
         ←
       </button>
-      
+
       <button
         onClick={() => handleSlideChange(Math.min(2, currentSlide + 1))}
         disabled={currentSlide === 2}
-        className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full z-10 ${
-          currentSlide === 2 ? 'text-gray-300' : 'text-gray-600 hover:text-black'
-        } transition-colors`}
+        className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full z-10 ${currentSlide === 2 ? 'text-gray-300' : 'text-gray-600 hover:text-black'
+          } transition-colors`}
         aria-label="Next slide"
       >
         →
