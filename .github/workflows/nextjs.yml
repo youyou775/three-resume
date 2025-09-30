@@ -1,16 +1,18 @@
-name: Build three-resume Next.js
-on: push
-jobs: 
-  build-project:
-    name: Build project
+name: Build and Deploy three-resume Next.js
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read      # needed for checkout
+  pages: write        # allow deployment to GitHub Pages
+  id-token: write     # required for OIDC auth
+
+jobs:
+  build:
     runs-on: ubuntu-latest
-    
-    permissions:
-      contents: write    
-      pages: write       
-      id-token: write    
-
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,20 +29,28 @@ jobs:
       - name: Cache Next.js build
         uses: actions/cache@v4
         with:
-          path: |
-            .next/cache
+          path: .next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      - name: Build project
-        run: npm run build
+      - name: Build Next.js project
+        run: npm run build && npm run export
         env:
           NODE_ENV: production
-          
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        if: github.ref == 'refs/heads/main'
+
+      - name: Upload static site artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out
+          path: ./out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
