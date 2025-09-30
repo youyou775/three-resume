@@ -18,8 +18,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      - name: install npm dependencies
+      - name: Install npm dependencies
         run: npm ci
 
-      - name: build assets
+      - name: List files in components directory
+        run: ls -la app/components/
+
+      - name: Build assets
         run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: /three-resume
