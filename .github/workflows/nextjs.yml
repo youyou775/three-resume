@@ -35,7 +35,7 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
       - name: Build Next.js project
-        run: npm run build && npm run export
+        run: npm run build 
         env:
           NODE_ENV: production
 
