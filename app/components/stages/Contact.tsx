@@ -69,7 +69,7 @@ export default function Contact() {
           <div ref={ctaRef} className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="mailto:your.email@example.com"
+                href="mailto:youssef_aboualghar@hotmail.com"
                 className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-white bg-black rounded-lg hover:bg-gray-800 transition-colors duration-200"
               >
                 Get In Touch

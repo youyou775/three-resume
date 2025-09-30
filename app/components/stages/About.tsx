@@ -5,21 +5,22 @@ import gsap from "gsap";
 interface AboutProps {
   isInitialLoad?: boolean;
   onContinue?: () => void;
+  isReady?: boolean; // New prop
 }
 
-export default function About({ isInitialLoad = false, onContinue }: AboutProps) {
+export default function About({ isInitialLoad = false, onContinue, isReady = false }: AboutProps) {
   const textRef = useRef<HTMLParagraphElement>(null);
   const divRef = useRef<HTMLDivElement>(null);
   const spanRef = useRef<HTMLSpanElement>(null);
   const [clickEnabled, setClickEnabled] = useState(false);
 
   useEffect(() => {
-    if (isInitialLoad && textRef.current && spanRef.current) {
+    // Only animate when both initialLoad is true AND assets are ready
+    if (isInitialLoad && isReady && textRef.current && spanRef.current) {
       const tl = gsap.timeline({
         onComplete: () => {
           setClickEnabled(true);
 
-          // Start loop animation on span after it fully appears
           gsap.to(spanRef.current, {
             opacity: 0.3,
             duration: 1,
@@ -51,10 +52,11 @@ export default function About({ isInitialLoad = false, onContinue }: AboutProps)
         "-=1.5"
       );
     }
-  }, [isInitialLoad]);
+  }, [isInitialLoad, isReady]); // Add isReady dependency
 
   const handleClick = () => {
-    if (!clickEnabled) return;
+    // Only allow click if ready and click is enabled
+    if (!clickEnabled || !isReady) return;
 
     const tl = gsap.timeline({ onComplete: onContinue });
 
@@ -76,7 +78,7 @@ export default function About({ isInitialLoad = false, onContinue }: AboutProps)
         <div
           ref={divRef}
           className={`fixed w-screen h-screen flex flex-col items-center justify-center bg-orange-200/70 ${
-            clickEnabled ? "cursor-pointer" : ""
+            clickEnabled && isReady ? "cursor-pointer" : ""
           }`}
           onClick={handleClick}
         >
@@ -90,7 +92,7 @@ export default function About({ isInitialLoad = false, onContinue }: AboutProps)
             ref={spanRef}
             className="w-full text-center text-gray-700 text-lg"
           >
-            Click anywhere to continue
+            {isReady ? "Click anywhere to continue" : "Loading..."}
           </span>
         </div>
       )}

@@ -1,6 +1,7 @@
-import React, { Suspense, useMemo, useRef, useState, useEffect } from "react";
+// Three.tsx
+import React, { Suspense, useMemo, useRef, useEffect } from "react";
 import { Canvas, CameraProps } from "@react-three/fiber";
-import { OrbitControls, Stats } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import TargetAnimate from "../../utils/targetAnimate";
 import { raycast, raycastClick, raycastHover } from "../../utils/raycast";
@@ -8,73 +9,22 @@ import { CameraTweener } from "./CameraTweener";
 import { GLTFAssetLoader } from '../GLTFAssetLoader';
 import LoadingScreen from "../loadingScreen";
 import { CameraDebug } from "@/app/utils/cameraDebug";
+import { useMobileDetection } from '@/app/hooks/useMobileDetection';
+import { useCameraConfig } from '@/app/hooks/useCameraConfig';
+import { useCurrentGltf } from '@/app/hooks/useCurrentGltf';
 
-export default function Three({
-  progress = 0,
-  scrollIndex,
-}: {
+interface ThreeProps {
   progress?: number;
   scrollIndex: number;
-}) {
-  const debug = false; // Set to true to enable debug mode
-  const [isMobile, setIsMobile] = useState(false);
+  onAssetsReady?: () => void; // New callback prop
+}
 
-  // Load GLTFs internally
+export default function Three({ progress = 0, scrollIndex, onAssetsReady }: ThreeProps) {
+  const debug = false;
+  const isMobile = useMobileDetection();
   const { gltfs, ready } = GLTFAssetLoader();
-
-  // Mobile detection
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Get current GLTF based on scrollIndex
-  const currentGltf = useMemo(() => {
-    if (!gltfs.length) return null;
-    // For scrollIndex 0 (about) and 4 (contact), use the first GLTF
-    if (scrollIndex === 0) return gltfs[0] || null;
-    // For other sections, use the appropriate GLTF
-    return gltfs[Math.max(0, Math.min(scrollIndex - 1, gltfs.length - 1))];
-  }, [gltfs, scrollIndex]);
-
-  // Camera configurations
-  const aboutCamera = useMemo(() => ({
-    position: isMobile
-      ? [6.954, 4.456, 8.482] as [number, number, number]
-      : [5.350, 4.100, -0.573] as [number, number, number],
-    lookAt: isMobile
-      ? [-1.451, 2.095, -1.892] as [number, number, number]
-      : [0.069, 2.928, -1.892] as [number, number, number],
-    fov: 35,
-  }), [isMobile]);
-
-  const modelCamera = useMemo(() => {
-    if (currentGltf?.cameras?.[0]?.position) {
-      return {
-        // Use commented position/lookAt for mobile, normal for desktop
-        position: isMobile
-          ? [15.806, 8.405, 32.181] as [number, number, number]
-          : [11.118, 2.794, 7.675] as [number, number, number],
-        lookAt: isMobile
-          ? [0.312, -1.861, 0.266] as [number, number, number]
-          : [1.364, 2.331, -2.716] as [number, number, number],
-        fov: aboutCamera.fov,
-      };
-    }
-    return aboutCamera;
-  }, [currentGltf, aboutCamera, isMobile]);
-
-  // Contact camera - different angle for contact page
-  const contactCamera = useMemo(() => ({
-    position: [2.5, 6.0, 12.0] as [number, number, number],
-    lookAt: [0.0, 3.0, 0.0] as [number, number, number],
-    fov: 40,
-  }), []);
+  const currentGltf = useCurrentGltf(gltfs, scrollIndex);
+  const { aboutCamera, modelCamera, contactCamera } = useCameraConfig(isMobile, currentGltf);
 
   const camera = useMemo(
     () => new THREE.PerspectiveCamera(aboutCamera.fov, 1, 0.1, 1000),
@@ -88,18 +38,16 @@ export default function Three({
 
   const controlsRef = useRef<any>(null);
 
-  // Show loading screen when assets aren't ready
+  // Notify parent when assets are ready
+  useEffect(() => {
+    if (ready && currentGltf && onAssetsReady) {
+      onAssetsReady();
+    }
+  }, [ready, currentGltf, onAssetsReady]);
+
+  // Show nothing while loading - parent will show loading screen
   if (!ready || !currentGltf) {
-    return (
-      <div className="fixed w-screen h-screen">
-        <div className="text-white bg-gray-900 w-screen h-screen flex items-center justify-center">
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 border-4 border-gray-600 border-t-white rounded-full animate-spin mb-4"></div>
-            <p>Loading 3D assets...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -117,7 +65,7 @@ export default function Three({
       >
         <Suspense fallback={<LoadingScreen />}>
           <primitive object={currentGltf.scene} />
-          {!debug ?
+          {!debug ? (
             <>
               <OrbitControls ref={controlsRef} />
               <CameraTweener
@@ -128,8 +76,10 @@ export default function Three({
                 controlsRef={controlsRef}
                 scrollIndex={scrollIndex}
               />
-            </> : <CameraDebug />
-          }
+            </>
+          ) : (
+            <CameraDebug />
+          )}
           <TargetAnimate />
         </Suspense>
       </Canvas>

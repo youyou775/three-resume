@@ -10,6 +10,7 @@ import SidePaneMobile from './stages/SidePaneMobile';
 const Scene: React.FC = () => {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [assetsReady, setAssetsReady] = useState(false); // New state
   
   const {
     scrollIndex,
@@ -23,7 +24,7 @@ const Scene: React.FC = () => {
   // Mobile detection
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768); // md breakpoint
+      setIsMobile(window.innerWidth < 768);
     };
     
     checkMobile();
@@ -32,7 +33,7 @@ const Scene: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setSectionCount(4); // Fiserv, Conix, Modern Academy, Contact
+    setSectionCount(4);
   }, [setSectionCount]);
 
   useEffect(() => {
@@ -42,24 +43,40 @@ const Scene: React.FC = () => {
 
   return (
     <>
-      {/* Three.js Scene - Full screen on desktop, top half on mobile */}
-      <div className={isMobile ? 'fixed top-0 w-screen h-1/2' : 'fixed w-screen h-screen'}>
-        <Three progress={scrollProgress} scrollIndex={scrollIndex} />
-      </div>
-
-      {/* About Section */}
-      {scrollIndex === 0 && (
-        <About isInitialLoad={isInitialLoad} onContinue={() => setIsInitialLoad(false)} />
+      {/* Loading Screen - show until assets are ready */}
+      {!assetsReady && (
+        <div className="fixed w-screen h-screen z-50">
+          <div className="text-white bg-gray-900 w-screen h-screen flex items-center justify-center">
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 border-4 border-gray-600 border-t-white rounded-full animate-spin mb-4"></div>
+              <p className="text-lg">Loading 3D Experience...</p>
+            </div>
+          </div>
+        </div>
       )}
 
-      {/* SidePane - Desktop: right side, Mobile: bottom half */}
+      {/* Three.js Scene */}
+      <div className={isMobile ? 'fixed top-0 w-screen h-1/2' : 'fixed w-screen h-screen'}>
+        <Three 
+          progress={scrollProgress} 
+          scrollIndex={scrollIndex}
+          onAssetsReady={() => setAssetsReady(true)}
+        />
+      </div>
+
+      {/* About Section - only clickable when assets are ready */}
+      {scrollIndex === 0 && (
+        <About 
+          isInitialLoad={isInitialLoad} 
+          onContinue={() => setIsInitialLoad(false)}
+          isReady={assetsReady} // Pass ready state to About
+        />
+      )}
+
+      {/* SidePane */}
       {scrollIndex > 0 && scrollIndex < 4 && (
         <>
-          {isMobile ? (
-            <SidePaneMobile />
-          ) : (
-            <SidePane />
-          )}
+          {isMobile ? <SidePaneMobile /> : <SidePane />}
         </>
       )}
 
