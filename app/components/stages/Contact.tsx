@@ -50,7 +50,7 @@ export default function Contact() {
       className="fixed  h-screen flex flex-col items-center justify-center bg-orange-200/55"
     >
       <div className=" w-screen h-screen flex flex-col items-center justify-center text-gray-800 pointer-events-auto">
-        <div className="text-center">
+        <div className="text-center  p-4">
           <h1 
             ref={titleRef}
             className="text-6xl font-bold mb-6"

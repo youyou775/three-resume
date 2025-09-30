@@ -44,7 +44,7 @@ export default function About({ isInitialLoad = false, onContinue }: AboutProps)
         { opacity: 0 },
         {
           opacity: 1,
-          duration: 1.5,
+          duration: 1,
           ease: "power2.out",
           delay: 1.5,
         },

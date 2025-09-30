@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, useRef } from "react";
+import React, { Suspense, useMemo, useRef, useState, useEffect } from "react";
 import { Canvas, CameraProps } from "@react-three/fiber";
 import { OrbitControls, Stats } from "@react-three/drei";
 import * as THREE from "three";
@@ -7,6 +7,7 @@ import { raycast, raycastClick, raycastHover } from "../../utils/raycast";
 import { CameraTweener } from "./CameraTweener";
 import { GLTFAssetLoader } from '../GLTFAssetLoader';
 import LoadingScreen from "../loadingScreen";
+import { CameraDebug } from "@/app/utils/cameraDebug";
 
 export default function Three({
   progress = 0,
@@ -15,8 +16,22 @@ export default function Three({
   progress?: number;
   scrollIndex: number;
 }) {
+  const debug = false; // Set to true to enable debug mode
+  const [isMobile, setIsMobile] = useState(false);
+
   // Load GLTFs internally
   const { gltfs, ready } = GLTFAssetLoader();
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Get current GLTF based on scrollIndex
   const currentGltf = useMemo(() => {
@@ -29,21 +44,30 @@ export default function Three({
 
   // Camera configurations
   const aboutCamera = useMemo(() => ({
-    position: [5.350, 4.100, -0.871] as [number, number, number],
-    lookAt: [0.069, 2.928, -1.892] as [number, number, number],
+    position: isMobile
+      ? [6.954, 4.456, 8.482] as [number, number, number]
+      : [5.350, 4.100, -0.573] as [number, number, number],
+    lookAt: isMobile
+      ? [-1.451, 2.095, -1.892] as [number, number, number]
+      : [0.069, 2.928, -1.892] as [number, number, number],
     fov: 35,
-  }), []);
+  }), [isMobile]);
 
   const modelCamera = useMemo(() => {
     if (currentGltf?.cameras?.[0]?.position) {
       return {
-        position: [11.118, 2.794, 7.675] as [number, number, number],
-        lookAt: [1.364, 2.331, -2.716] as [number, number, number],
+        // Use commented position/lookAt for mobile, normal for desktop
+        position: isMobile
+          ? [15.806, 8.405, 32.181] as [number, number, number]
+          : [11.118, 2.794, 7.675] as [number, number, number],
+        lookAt: isMobile
+          ? [0.312, -1.861, 0.266] as [number, number, number]
+          : [1.364, 2.331, -2.716] as [number, number, number],
         fov: aboutCamera.fov,
       };
     }
     return aboutCamera;
-  }, [currentGltf, aboutCamera]);
+  }, [currentGltf, aboutCamera, isMobile]);
 
   // Contact camera - different angle for contact page
   const contactCamera = useMemo(() => ({
@@ -87,22 +111,25 @@ export default function Three({
         onPointerDown={(event: any) => raycast(event, currentGltf, raycastClick)}
         className="w-full h-full transition-opacity duration-700 ease-[cubic-bezier(.77,0,.18,1)]"
         style={{
-          pointerEvents: (scrollIndex > 0 && scrollIndex < 4) ? "auto" : "none",
+          pointerEvents: (scrollIndex > 0 && scrollIndex < 4 && !isMobile) ? "auto" : "none",
           background: "var(--background, #fff)",
         }}
       >
         <Suspense fallback={<LoadingScreen />}>
           <primitive object={currentGltf.scene} />
-          <OrbitControls ref={controlsRef} />
-          <CameraTweener
-            cameraA={aboutCamera}
-            cameraB={modelCamera}
-            cameraC={contactCamera}
-            progress={progress}
-            controlsRef={controlsRef}
-            scrollIndex={scrollIndex}
-          />
-          <Stats />
+          {!debug ?
+            <>
+              <OrbitControls ref={controlsRef} />
+              <CameraTweener
+                cameraA={aboutCamera}
+                cameraB={modelCamera}
+                cameraC={contactCamera}
+                progress={progress}
+                controlsRef={controlsRef}
+                scrollIndex={scrollIndex}
+              />
+            </> : <CameraDebug />
+          }
           <TargetAnimate />
         </Suspense>
       </Canvas>
