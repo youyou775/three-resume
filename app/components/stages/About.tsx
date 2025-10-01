@@ -78,7 +78,7 @@ export default function About({ isInitialLoad = false, onContinue, isReady = fal
         <div
           ref={divRef}
           className={`fixed w-screen h-screen flex flex-col items-center justify-center bg-orange-200/70 ${
-            clickEnabled && isReady ? "cursor-pointer" : ""
+            clickEnabled && isReady ? "cursor-pointer" : "cursor-default"
           }`}
           onClick={handleClick}
         >
