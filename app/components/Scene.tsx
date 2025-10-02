@@ -11,7 +11,7 @@ const Scene: React.FC = () => {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [assetsReady, setAssetsReady] = useState(false); // New state
-  
+
   const {
     scrollIndex,
     scrollProgress,
@@ -26,20 +26,22 @@ const Scene: React.FC = () => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   useEffect(() => {
-    setSectionCount(4);
+    setSectionCount(5);
   }, [setSectionCount]);
 
   useEffect(() => {
     setStoreIntro(isInitialLoad);
-    document.body.style.height = isInitialLoad ? '100vh' : '500vh';
-  }, [isInitialLoad]);
+    document.body.style.height = isInitialLoad
+      ? "100vh"
+      : `${5 * 100}vh`; // sections + buffer
+  }, [isInitialLoad, setStoreIntro]);
 
   return (
     <>
@@ -57,8 +59,8 @@ const Scene: React.FC = () => {
 
       {/* Three.js Scene */}
       <div className={isMobile ? 'fixed top-0 w-screen h-1/2' : 'fixed w-screen h-screen'}>
-        <Three 
-          progress={scrollProgress} 
+        <Three
+          progress={scrollProgress}
           scrollIndex={scrollIndex}
           onAssetsReady={() => setAssetsReady(true)}
         />
@@ -66,8 +68,8 @@ const Scene: React.FC = () => {
 
       {/* About Section - only clickable when assets are ready */}
       {scrollIndex === 0 && (
-        <About 
-          isInitialLoad={isInitialLoad} 
+        <About
+          isInitialLoad={isInitialLoad}
           onContinue={() => setIsInitialLoad(false)}
           isReady={assetsReady} // Pass ready state to About
         />

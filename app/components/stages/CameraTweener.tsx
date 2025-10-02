@@ -35,7 +35,7 @@ export function CameraTweener({
     // Handle different scroll index scenarios
     if (scrollIndex === 0) {
       // scrollIndex 0: About page - animate from A to B
-      const p = THREE.MathUtils.clamp(progress, 0, 1);
+      const p = THREE.MathUtils.clamp(progress * 4, 0, 1);//multiply by number of ScrollIndices
 
       vA.fromArray(cameraA.position);
       vB.fromArray(cameraB.position);
@@ -54,8 +54,8 @@ export function CameraTweener({
         camera.fov = THREE.MathUtils.lerp(fA, fB, p);
         camera.updateProjectionMatrix();
       }
-    } else if (scrollIndex >= 1 && scrollIndex <= 3) {
-      // scrollIndex 1-3: SidePane sections - stay at cameraB
+    } else if (scrollIndex >= 1 && scrollIndex < 3) {
+      // scrollIndex 1-2: SidePane sections - stay at cameraB
       camera.position.set(...cameraB.position);
       tOut.set(...cameraB.lookAt);
       controlsRef.current?.target.copy(tOut);
@@ -64,9 +64,9 @@ export function CameraTweener({
         camera.fov = cameraB.fov;
         camera.updateProjectionMatrix();
       }
-    } else if (scrollIndex === 4) {
-      // scrollIndex 4: Contact page - animate from B to C
-      const p = THREE.MathUtils.clamp(progress, 0, 1);
+    } else if (scrollIndex === 3) {
+      // scrollIndex 3: Last SidePane section - start transition to contact
+      const p = THREE.MathUtils.clamp(progress * 4, 0, 1);//multiply by number of ScrollIndices
 
       vB.fromArray(cameraB.position);
       vC.fromArray(cameraC.position);
