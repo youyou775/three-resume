@@ -1,4 +1,4 @@
-import { Experience } from '@/app/data/experienceData';
+import { Experience } from '@/app/utils/experienceData';
 import { TechTags } from './TechTags';
 
 interface ExperienceContentProps {

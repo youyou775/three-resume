@@ -2,7 +2,7 @@
 import React, { useLayoutEffect, useMemo, useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { useScrollStore } from "@/app/store/scrollStore";
-import { experienceData } from "@/app/data/experienceData";
+import { experienceData } from "@/app/utils/experienceData";
 import { ExperienceContent } from "@/app/components/ExperienceContent";
 
 export default function SidePaneMobile() {

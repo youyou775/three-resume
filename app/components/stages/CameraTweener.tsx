@@ -1,4 +1,5 @@
 // CameraTweener.tsx
+import { useScrollStore } from "@/app/store/scrollStore";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
@@ -7,17 +8,18 @@ export function CameraTweener({
   cameraA,
   cameraB,
   cameraC, // Contact camera
-  progress,
   controlsRef,
-  scrollIndex,
 }: {
   cameraA: { position: [number, number, number]; fov?: number; lookAt: [number, number, number] };
   cameraB: { position: [number, number, number]; fov?: number; lookAt: [number, number, number] };
   cameraC: { position: [number, number, number]; fov?: number; lookAt: [number, number, number] };
-  progress: number;
   controlsRef: React.RefObject<any>;
-  scrollIndex: number;
 }) {
+  const {
+    scrollIndex,
+    scrollProgress,
+  } = useScrollStore();
+
   const { camera } = useThree();
 
   const vA = useMemo(() => new THREE.Vector3(), []);
@@ -35,7 +37,7 @@ export function CameraTweener({
     // Handle different scroll index scenarios
     if (scrollIndex === 0) {
       // scrollIndex 0: About page - animate from A to B
-      const p = THREE.MathUtils.clamp(progress * 4, 0, 1);//multiply by number of ScrollIndices
+      const p = THREE.MathUtils.clamp(scrollProgress * 4, 0, 1);//multiply by number of ScrollIndices
 
       vA.fromArray(cameraA.position);
       vB.fromArray(cameraB.position);
@@ -66,7 +68,7 @@ export function CameraTweener({
       }
     } else if (scrollIndex === 3) {
       // scrollIndex 3: Last SidePane section - start transition to contact
-      const p = THREE.MathUtils.clamp(progress * 4, 0, 1);//multiply by number of ScrollIndices
+      const p = THREE.MathUtils.clamp(scrollProgress * 4, 0, 1);//multiply by number of ScrollIndices
 
       vB.fromArray(cameraB.position);
       vC.fromArray(cameraC.position);

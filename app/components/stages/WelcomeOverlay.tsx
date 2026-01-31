@@ -1,22 +1,20 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { useAppStateStore } from "@/app/store/appStateStore";
 
-interface AboutProps {
-  isInitialLoad?: boolean;
-  onContinue?: () => void;
-  isReady?: boolean; // New prop
-}
 
-export default function About({ isInitialLoad = false, onContinue, isReady = false }: AboutProps) {
+export default function WelcomeOverlay() {
   const textRef = useRef<HTMLParagraphElement>(null);
   const divRef = useRef<HTMLDivElement>(null);
   const spanRef = useRef<HTMLSpanElement>(null);
   const [clickEnabled, setClickEnabled] = useState(false);
 
+  const { initialLoad, assetsLoaded, setInitialLoad } = useAppStateStore();
+
   useEffect(() => {
     // Only animate when both initialLoad is true AND assets are ready
-    if (isInitialLoad && isReady && textRef.current && spanRef.current) {
+    if (initialLoad && assetsLoaded && textRef.current && spanRef.current) {
       const tl = gsap.timeline({
         onComplete: () => {
           setClickEnabled(true);
@@ -52,13 +50,13 @@ export default function About({ isInitialLoad = false, onContinue, isReady = fal
         "-=1.5"
       );
     }
-  }, [isInitialLoad, isReady]); // Add isReady dependency
+  }, [initialLoad, assetsLoaded]); // Add isReady dependency
 
   const handleClick = () => {
     // Only allow click if ready and click is enabled
-    if (!clickEnabled || !isReady) return;
+    if (!clickEnabled || !assetsLoaded) return;
 
-    const tl = gsap.timeline({ onComplete: onContinue });
+    const tl = gsap.timeline({ onComplete: () => setInitialLoad(false), });
 
     tl.to(textRef.current, {
       y: 300,
@@ -74,12 +72,11 @@ export default function About({ isInitialLoad = false, onContinue, isReady = fal
 
   return (
     <>
-      {isInitialLoad && (
+      {initialLoad && (
         <div
           ref={divRef}
-          className={`fixed w-screen h-screen flex flex-col items-center justify-center backdrop-blur-sm ${
-            clickEnabled && isReady ? "cursor-pointer" : "cursor-default"
-          }`}
+          className={`fixed w-screen h-screen flex flex-col items-center justify-center backdrop-blur-sm ${clickEnabled && assetsLoaded ? "cursor-pointer" : "cursor-default"
+            }`}
           onClick={handleClick}
         >
           <p
@@ -92,7 +89,7 @@ export default function About({ isInitialLoad = false, onContinue, isReady = fal
             ref={spanRef}
             className="w-full text-center text-gray-700 text-lg"
           >
-            {isReady ? "Click anywhere to continue" : "Loading..."}
+            {assetsLoaded ? "Click anywhere to continue" : "Loading..."}
           </span>
         </div>
       )}
