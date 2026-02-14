@@ -46,13 +46,13 @@ export default function SidePaneMobile() {
 
     const handleTouchEnd = (e: TouchEvent) => {
       if (!isDragging) return;
-      
+
       // Don't process as swipe if target is a button
       if ((e.target as HTMLElement)?.closest('button')) {
         isDragging = false;
         return;
       }
-      
+
       const diffX = startX - currentX;
       if (Math.abs(diffX) > 50) {
         if (diffX > 0 && bulletIndex < experienceData.length - 1) setBulletIndex(bulletIndex + 1);
@@ -83,7 +83,7 @@ export default function SidePaneMobile() {
   return (
     <>
 
-      <div ref={containerRef} className="fixed bottom-0 w-screen h-140 bg-gradient-to-b from-current to-gray-300 border-t flex flex-col items-center">
+      <div ref={containerRef} className="fixed bottom-0 w-screen h-[62%] bg-gradient-to-b from-current to-gray-300 border-t flex flex-col items-center">
         <button
           onClick={() => handleSlideChange(Math.max(0, bulletIndex - 1))}
           disabled={bulletIndex === 0}
@@ -99,13 +99,13 @@ export default function SidePaneMobile() {
         >
           →
         </button>
-        <div className="flex-grow mx-5 pt-2">
+        <div className="flex-grow mx-5 pt-2 overflow-y-auto">
           <div ref={(el) => { carouselRef.current = el; }}>
             <ExperienceContent experience={experience} size="small" />
           </div>
         </div>
 
-        <div className="flex gap-5 mb-16">
+        <div className="flex gap-5 my-4">
           {experienceData.map((i) => (
             <button
               key={i.id}
@@ -115,12 +115,18 @@ export default function SidePaneMobile() {
             />
           ))}
         </div>
+        <button
+          ref={slideButtonRef}
+          className={`text-gray-600 flex flex-col items-center cursor-pointer transition-opacity duration-300 ${bulletIndex === experienceData.length - 1
+              ? 'opacity-100 visible'
+              : 'opacity-0 invisible'
+            }`}
+          onClick={() => setCallToAction(Page.ToContact)}
+        >
+          <span className="text-2xl">Get in Touch</span>
+          <ChevronDown className="fill-current inline-block" />
+        </button>
       </div>
-      {bulletIndex == experienceData.length - 1 && <button ref={slideButtonRef} className="fixed top-[96%] right-0 -translate-y-[30%] w-[100vw] text-gray-600 flex flex-col items-center cursor-pointer"
-        onClick={() => setCallToAction(Page.ToContact)}>
-        <span className="text-2xl">Get in Touch</span>
-        <ChevronDown className="fill-current inline-block" />
-      </button>}
     </>
   );
 }

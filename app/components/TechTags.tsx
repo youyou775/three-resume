@@ -4,13 +4,13 @@ interface TechTagsProps {
   className?: string;
 }
 
-export const TechTags: React.FC<TechTagsProps> = ({ 
-  technologies, 
+export const TechTags: React.FC<TechTagsProps> = ({
+  technologies,
   size = 'medium',
   className = ''
 }) => {
-  const sizeClasses = size === 'small' 
-    ? 'p-0.5 px-1.5 text-xs' 
+  const sizeClasses = size === 'small'
+    ? 'px-1.5 py-0.25 text-xs'
     : 'px-2 py-0.5 text-sm';
 
   return (

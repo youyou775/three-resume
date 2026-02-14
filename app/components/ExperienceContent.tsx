@@ -38,7 +38,7 @@ export const ExperienceContent: React.FC<ExperienceContentProps> = ({
         <TechTags 
           technologies={experience.tech} 
           size={size === 'small' ? 'small' : 'medium'}
-          className={size === 'small' ? 'mt-4' : 'mt-12'}
+          className={size === 'small' ? 'mt-2' : 'mt-12'}
         />
       </div>
     </>

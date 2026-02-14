@@ -12,7 +12,7 @@ export default function WelcomeOverlay() {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [clickEnabled, setClickEnabled] = useState(false);
 
-  const { initialLoad, assetsLoaded, setInitialLoad } = useAppStateStore();
+  const { initialLoad, isMobile, assetsLoaded, setInitialLoad } = useAppStateStore();
 
   useEffect(() => {
     // Only animate when both initialLoad is true AND assets are ready
@@ -87,15 +87,15 @@ export default function WelcomeOverlay() {
           onClick={handleClick}
         >
           <p ref={nameRef}
-            className="max-w-[1000px] text-center text-[42px] leading-tight text-gray-700 font-semibold">
+            className={`max-w-[1000px] text-center leading-tight text-gray-700 font-semibold ${isMobile ? "text-2xl" : "text-5xl"}`}>
             Hello, I'm <br /> YOUSSEF ABOUELGHAR
           </p>
           <p ref={titleRef}
-            className="max-w-[1000px] text-center text-[48px] leading-tight text-gray-700 font-bold">
+            className={`max-w-[1000px] text-center leading-tight text-gray-700 font-bold ${isMobile ? "text-3xl" : "text-5xl"}`}>
             Senior Full Stack Developer / 3D Computational Designer
           </p>
           <p ref={summaryRef}
-            className="max-w-[1000px] text-center text-[32px] text-gray-700 mt-8 mx-2">
+            className={`max-w-[1000px] text-center text-gray-700 mt-8 mx-2 ${isMobile ? "text-xl" : "text-4xl"}`}>
             A full stack developer with 7+ years of experience in front-end and back-end. Combined with 3D and
             graphic design.
           </p>
