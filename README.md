@@ -1,46 +1,137 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# Three Resume - Interactive 3D Portfolio
+
+A high-performance interactive resume built with **Next.js 15**, **Three.js**, and **TypeScript**. This project demonstrates advanced web graphics programming, real-time user interface interaction, and modern full-stack development practices.
+
+## Overview
+
+Three Resume is a sophisticated web application that blends 3D graphics rendering with responsive web design to create an engaging portfolio experience. The application features:
+
+- **Interactive 3D Scene Rendering** - Real-time 3D graphics powered by Three.js with GLTF asset loading
+- **Camera Animation System** - Choreographed camera movements and tweening for narrative-driven scene exploration
+- **Responsive Design** - Seamless experience across desktop and mobile with adaptive UI overlays
+- **Optimized Performance** - Strategic asset loading and GPU-accelerated rendering
+- **Type-Safe Development** - Full TypeScript implementation with strict mode enabled
+
+## Tech Stack
+
+### Core
+- **Next.js 15** - React framework with server-side rendering and optimized builds
+- **React 19** - Component-based UI architecture
+- **TypeScript** - Type-safe development with strict compiler settings
+- **Three.js** - WebGL-based 3D graphics library
+
+### Build & Tooling
+- **Webpack** (via Next.js) - Module bundling and code splitting
+- **PostCSS** - CSS transformation and optimization
+- **ESLint/Prettier** - Code quality and formatting standards
+
+## Architecture Highlights
+
+### State Management
+- Centralized application state via Zustand store (\ppStateStore.ts\)
+- Page navigation and UI state management
+
+### Animation & Interaction
+- Custom React hooks for camera manipulation (\useCameraAnimate\, \useCameraConfig\)
+- Scroll-driven animations with trigger points (\useScrollTriggerAnimations\)
+- Button animation state (\useContactButtonAnimation\)
+
+### 3D Graphics Pipeline
+- GLTF model loading with material management (\GLTFAssetLoader.tsx\)
+- Material application and optimization (\pplyMats.tsx\)
+- Raycasting for interactive object selection (\aycast.tsx\)
+- Camera targeting and smooth interpolation (\	argetAnimate.tsx\)
+
+### Responsive Architecture
+- Mobile detection and adaptive layouts (\useMobileDetection\)
+- Platform-specific UI components (mobile side pane, desktop overlay)
+- Debug utilities for camera system development
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+ 
+- npm, yarn, pnpm, or bun
 
-```bash
+### Installation & Development
+
+\\\ash
+# Install dependencies
+npm install
+
+# Start development server with hot-reload
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+\\\
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+\\\ash
+npm run build
+npm start
+\\\
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+\\\
+app/
+ components/
+    Scene.tsx                    # Main Three.js scene setup
+    GLTFAssetLoader.tsx          # Model loading and caching
+    ExperienceContent.tsx        # Content presentation layer
+    stages/                      # Scene-specific components
+ hooks/                           # Custom React hooks for animation & state
+ store/                           # Zustand state management
+ utils/                           # Graphics utilities & helpers
+ types/                           # TypeScript type definitions
+ enums/                           # Page navigation enums
+\\\
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key Features for Developers
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Performance Optimizations
+- Lazy-loaded GLTF assets with streaming support
+- GPU-accelerated camera animations
+- Efficient state updates with selective re-renders
+- Optimized bundle sizes with Next.js code splitting
 
-## Deploy on Vercel
+### Developer Experience
+- Hot Module Replacement (HMR) for rapid iteration
+- TypeScript strict mode for safety and clarity
+- Modular component architecture for maintainability
+- Centralized configuration management
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Advanced Techniques
+- **Raycasting** for 3D object interaction detection
+- **Tweening** for smooth interpolated animations
+- **Material Management** for complex shader optimization
+- **Responsive Viewport Handling** for adaptive rendering
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Development Commands
 
-## usefule commands
+\\\ash
+# Development server with hot-reload
+npm run dev
 
-1. find port to kill 
-    ```cmd
-    # find task using your port
-    netstat -ano | findstr :<port_number>
-    # kill that task
-    taskkill /F /PID 31128
-    ```
+# Build production bundle
+npm run build
+
+# Start production server
+npm start
+
+# Troubleshoot port conflicts (Windows)
+netstat -ano | findstr :3000
+taskkill /F /PID <PID>
+\\\
+
+## Browser Compatibility
+
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- Requires WebGL support
+
+## License
+
+Open source project showcasing modern web development practices.
