@@ -1,4 +1,4 @@
-import { Experience } from '@/app/data/experienceData';
+import { Experience } from '@/app/utils/experienceData';
 import { TechTags } from './TechTags';
 
 interface ExperienceContentProps {
@@ -17,7 +17,7 @@ export const ExperienceContent: React.FC<ExperienceContentProps> = ({
 
   return (
     <>
-      <h1 className={`${titleClass} font-bold text-black mb-2`}>
+      <h1 className={`${titleClass} font-bold text-black`}>
         {experience.title}
       </h1>
       
@@ -38,7 +38,7 @@ export const ExperienceContent: React.FC<ExperienceContentProps> = ({
         <TechTags 
           technologies={experience.tech} 
           size={size === 'small' ? 'small' : 'medium'}
-          className={size === 'small' ? 'mt-6' : 'mt-12'}
+          className={size === 'small' ? 'mt-4' : 'mt-12'}
         />
       </div>
     </>

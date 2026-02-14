@@ -1,12 +1,18 @@
 "use client";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { useAppStateStore } from "@/app/store/appStateStore";
+import { ChevronUp } from 'lucide-react';
+import { Page } from "@/app/enums/Page";
 
 export default function Contact() {
+  const { setCallToAction } = useAppStateStore();
+
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const slideButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!titleRef.current || !subtitleRef.current || !ctaRef.current) return;
@@ -19,25 +25,37 @@ export default function Contact() {
 
     // Animate in sequence
     const tl = gsap.timeline({ delay: 0.5 });
-    
+
     tl.to(titleRef.current, {
       opacity: 1,
       y: 0,
       duration: 0.8,
       ease: "power2.out"
     })
-    .to(subtitleRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: "power2.out"
-    }, "-=0.4")
-    .to(ctaRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: "power2.out"
-    }, "-=0.4");
+      .to(subtitleRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out"
+      }, "-=0.4")
+      .to(ctaRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out"
+      }, "-=0.4").fromTo(
+        slideButtonRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 1,
+          repeat: -1,
+          yoyo: true,
+          ease: "power2.out",
+          delay: 1.5,
+        },
+        "-=1.5"
+      );
 
     return () => {
       tl.kill();
@@ -45,27 +63,32 @@ export default function Contact() {
   }, []);
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="fixed  h-screen flex flex-col items-center justify-center bg-orange-200/55"
     >
+
+      <button ref={slideButtonRef} className="text-gray-600 flex flex-col items-center cursor-pointer" onClick={() => setCallToAction(Page.ContactToExp)}>
+        <ChevronUp className="fill-current inline-block" />
+        <span className="text-2xl">Experience</span>
+      </button>
       <div className=" w-screen h-screen flex flex-col items-center justify-center text-gray-800 pointer-events-auto">
         <div className="text-center  p-4">
-          <h1 
+          <h1
             ref={titleRef}
             className="text-6xl font-bold mb-6"
           >
             Let's Work Together
           </h1>
-          
-          <p 
+
+          <p
             ref={subtitleRef}
             className="text-xl text-gray-600 mb-12 max-w-[600px]"
           >
-            Ready to bring your architecture or software project to life? 
+            Ready to bring your architecture or software project to life?
             I'd love to hear about your ideas and discuss how we can collaborate.
           </p>
-          
+
           <div ref={ctaRef} className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
@@ -74,7 +97,7 @@ export default function Contact() {
               >
                 Get In Touch
               </a>
-              
+
               <a
                 href="/Youssef_Abouelghar.pdf"
                 target="_blank"
@@ -84,25 +107,25 @@ export default function Contact() {
                 View Resume
               </a>
             </div>
-            
+
             <div className="flex justify-center space-x-6 text-gray-500">
-              <a 
-                href="https://www.linkedin.com/in/youssef-abouelghar-a13066111/" 
+              <a
+                href="https://www.linkedin.com/in/youssef-abouelghar-a13066111/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-gray-800 transition-colors duration-200"
               >
                 LinkedIn
               </a>
-              <a 
-                href="https://github.com/youyou775" 
+              <a
+                href="https://github.com/youyou775"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-gray-800 transition-colors duration-200"
               >
                 GitHub
               </a>
-              <a 
+              <a
                 href="/YA-Portfolio.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
