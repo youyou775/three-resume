@@ -21,7 +21,7 @@ export const useCameraConfig = (currentGltf: any) => {
           ? [15.806, 8.405, 32.181] as [number, number, number]
           : [11.118, 2.794, 7.675] as [number, number, number],
         lookAt: isMobile
-          ? [0.312, -1.861, 0.266] as [number, number, number]
+          ? [0.312, -4.2, 0.266] as [number, number, number]
           : [1.364, 2.331, -2.716] as [number, number, number],
         fov: aboutCamera.fov,
       };

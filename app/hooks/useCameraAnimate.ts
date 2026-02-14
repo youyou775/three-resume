@@ -12,7 +12,7 @@ export const useCameraAnimate = () => {
         const progressObj = { value: 0 };
         gsap.to(progressObj, {
             value: 100,
-            duration: 1,
+            duration: 3,
             ease: "power2.inOut",
             onUpdate: () => setTweenProgress(progressObj.value),
             onComplete: () => setAnimationComplete(true)

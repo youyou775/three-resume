@@ -5,51 +5,64 @@ import { useAppStateStore } from "@/app/store/appStateStore";
 
 
 export default function WelcomeOverlay() {
-  const textRef = useRef<HTMLParagraphElement>(null);
+  const nameRef = useRef<HTMLParagraphElement>(null);
+  const titleRef = useRef<HTMLParagraphElement>(null);
+  const summaryRef = useRef<HTMLParagraphElement>(null);
   const divRef = useRef<HTMLDivElement>(null);
-  const spanRef = useRef<HTMLSpanElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const [clickEnabled, setClickEnabled] = useState(false);
 
   const { initialLoad, assetsLoaded, setInitialLoad } = useAppStateStore();
 
   useEffect(() => {
     // Only animate when both initialLoad is true AND assets are ready
-    if (initialLoad && assetsLoaded && textRef.current && spanRef.current) {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          setClickEnabled(true);
+    if (!(initialLoad && assetsLoaded && nameRef.current && titleRef.current && summaryRef.current && buttonRef.current)) return;
 
-          gsap.to(spanRef.current, {
-            opacity: 0.3,
-            duration: 1,
-            repeat: -1,
-            yoyo: true,
-            ease: "power1.inOut",
-          });
-        },
-      });
+    gsap.set([nameRef.current, titleRef.current, summaryRef.current, buttonRef.current], {
+      opacity: 0,
+      y: 50
+    });
+    const tl = gsap.timeline({ ease: "power2.out"});
 
-      tl.fromTo(
-        textRef.current,
-        { y: 200, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.5,
-          ease: "power2.out",
-        }
-      ).fromTo(
-        spanRef.current,
-        { opacity: 0 },
-        {
-          opacity: 1,
-          duration: 1,
-          ease: "power2.out",
-          delay: 1.5,
-        },
-        "-=1.5"
-      );
-    }
+    tl.to(
+      nameRef.current,
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+      }
+    ).to(
+      titleRef.current,
+      {
+        y: 0,
+        opacity: 1,
+        delay: 0.5,
+        duration: 1,
+      }
+    ).to(
+      summaryRef.current,
+      {
+        y: 0,
+        opacity: 1,
+        delay: 0.5,
+        duration: 2,
+      },
+
+    ).to(
+      buttonRef.current,
+      {
+        opacity: 1,
+        duration: 1,
+        repeat: -1,
+        yoyo: true,
+        ease: "power1.inOut",
+        onStart: () => setClickEnabled(true),
+      },
+    );
+
+    return () => {
+      tl.kill();
+    };
   }, [initialLoad, assetsLoaded]); // Add isReady dependency
 
   const handleClick = () => {
@@ -58,14 +71,9 @@ export default function WelcomeOverlay() {
 
     const tl = gsap.timeline({ onComplete: () => setInitialLoad(false), });
 
-    tl.to(textRef.current, {
-      y: 300,
+    tl.to(divRef.current, {
       opacity: 0,
       duration: 1,
-      ease: "power2.in",
-    }).to(divRef.current, {
-      opacity: 0,
-      duration: 0.8,
       ease: "power2.in",
     });
   };
@@ -73,24 +81,28 @@ export default function WelcomeOverlay() {
   return (
     <>
       {initialLoad && (
-        <div
-          ref={divRef}
+        <div ref={divRef}
           className={`fixed w-screen h-screen flex flex-col items-center justify-center backdrop-blur-sm ${clickEnabled && assetsLoaded ? "cursor-pointer" : "cursor-default"
             }`}
           onClick={handleClick}
         >
-          <p
-            ref={textRef}
-            className="max-w-[700px] text-center mx-0 text-[64px] leading-tight text-gray-800 font-semibold"
-          >
-            I create Architecture design & Software
+          <p ref={nameRef}
+            className="max-w-[1000px] text-center text-[42px] leading-tight text-gray-700 font-semibold">
+            Hello, I'm <br /> YOUSSEF ABOUELGHAR
           </p>
-          <span
-            ref={spanRef}
-            className="w-full text-center text-gray-700 text-lg"
-          >
-            {assetsLoaded ? "Click anywhere to continue" : "Loading..."}
-          </span>
+          <p ref={titleRef}
+            className="max-w-[1000px] text-center text-[48px] leading-tight text-gray-700 font-bold">
+            Senior Full Stack Developer / 3D Computational Designer
+          </p>
+          <p ref={summaryRef}
+            className="max-w-[1000px] text-center text-[32px] text-gray-700 mt-8 mx-2">
+            A full stack developer with 7+ years of experience in front-end and back-end. Combined with 3D and
+            graphic design.
+          </p>
+          <button ref={buttonRef}
+            className="w-full text-center text-gray-700 text-lg cursor-pointer" >
+            Click anywhere to explore my experience
+          </button>
         </div>
       )}
     </>

@@ -36,7 +36,7 @@ export function CameraTweener({
 
   const tweenCameras = (vA: THREE.Vector3, vB: THREE.Vector3, tA: THREE.Vector3,
     tB: THREE.Vector3, cameraA: CameraTween, cameraB: CameraTween) => {
-    const p = THREE.MathUtils.clamp(tweenProgress*0.1, 0, 1);
+    const p = THREE.MathUtils.clamp(tweenProgress * 0.01, 0, 1);
 
     vA.fromArray(cameraA.position);
     vB.fromArray(cameraB.position);

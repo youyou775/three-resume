@@ -2,7 +2,7 @@
 import { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-export const useScrollTriggerAnimations = (bulletIndex: number) => {
+export const carouselAnimation = (bulletIndex: number) => {
   const elRefs = useRef<Array<HTMLElement | null>>([null, null, null]);
   const bulletsRef = useRef<Array<HTMLButtonElement | null>>([null, null, null]);
   const previousIndexRef = useRef<number>(0);

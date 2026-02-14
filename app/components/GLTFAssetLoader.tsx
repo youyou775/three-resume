@@ -34,7 +34,7 @@ export function UseGLTFAssetLoader() {
   const currentGltfHook = useMemo(() => {
     if (!gltfs.length) return null;
     if (initialLoad) return gltfs[0] || null;
-    return gltfs[bulletIndex];
+    return gltfs[bulletIndex] || gltfs[gltfs.length - 1];
   }, [gltfs, bulletIndex])
 
   //load scene when bulletIndex changes 
