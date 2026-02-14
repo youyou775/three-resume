@@ -1,9 +1,12 @@
 import { useMemo } from 'react';
+import { useAppStateStore } from '../store/appStateStore';
 
-export const useCameraConfig = (isMobile: boolean, currentGltf: any) => {
+export const useCameraConfig = (currentGltf: any) => {
+    const { isMobile } = useAppStateStore();
+  
   const aboutCamera = useMemo(() => ({
     position: isMobile
-      ? [6.954, 4.456, 8.482] as [number, number, number]
+      ? [6.954, 5.456, 8.482] as [number, number, number]
       : [5.350, 4.100, -0.573] as [number, number, number],
     lookAt: isMobile
       ? [-1.451, 2.095, -1.892] as [number, number, number]

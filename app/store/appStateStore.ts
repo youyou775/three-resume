@@ -7,38 +7,40 @@ import { useMobileDetection } from "../hooks/useMobileDetection";
 
 interface AppStateStore {
     //State
-    // currentGltf: (GLTF & ObjectMap) | null;
     initialLoad: boolean;
-    // sceneLoaded: boolean;
     assetsLoaded: boolean;
-    isMobile: boolean;
+    animationComplete: boolean;
+    isMobile: boolean | undefined;
+    bulletIndex: number;
+    callToAction:number;
+    tweenProgress: number;
     //Actions
-    // setGltf: (gltf: GLTF & ObjectMap | null) => void;
     setInitialLoad: (init: boolean) => void;
-    // setSceneLoaded: (scene: boolean) => void;
     setAssetsLoaded: (assets: boolean) => void;
     setIsMobile: (mobile: boolean) => void;
-    //Internal state
-    // _sceneLoading: boolean
-    // _setSceneLoading: (sceneLoading: boolean) => void;
+    setBulletIndex: (cta: number) => void;
+    setCallToAction: (cta: number) => void;
+    setAnimationComplete: (mobile: boolean) => void;
+    setTweenProgress: (progress: number) => void;
 }
 
 export const useAppStateStore = create<AppStateStore>()(
     subscribeWithSelector((set, get) => ({
         // Initial state
-        // currentGltf: null,
         initialLoad: true,
-        // sceneLoaded: false,
         assetsLoaded: false,
-        isMobile: false,
+        animationComplete: false,
+        isMobile: undefined,
+        bulletIndex: 0,
+        callToAction: 0,
+        tweenProgress: 0,
         // Actions
-        // setGltf: (gltf) => set({ currentGltf: gltf }),
         setInitialLoad: (init) => set({ initialLoad: init }),
-        // setSceneLoaded: (scene) => set({ sceneLoaded: scene }),
         setAssetsLoaded: (assets) => set({ assetsLoaded: assets }),
         setIsMobile: (mobile) => set({ isMobile: mobile }),
-        //Internal state
-        // _sceneLoading: false,
-        // _setSceneLoading: (sceneLoading) => set({ _sceneLoading: sceneLoading }),
+        setBulletIndex: (idx) => set({ bulletIndex: idx}),
+        setCallToAction: (cta) => set({ callToAction: cta}),
+        setAnimationComplete: (isAnimationComplete) => set({ animationComplete: isAnimationComplete }),
+        setTweenProgress: (progress) => set({ tweenProgress: progress }),
     }))
 );

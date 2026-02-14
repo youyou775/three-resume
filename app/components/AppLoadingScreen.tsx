@@ -5,7 +5,7 @@ export default function AppLoadingScreen() {
 
     return (
         <>
-            {!assetsLoaded && (
+            {(!assetsLoaded) && (
                 <div className="fixed w-screen h-screen z-50">
                     <div className="text-white bg-gray-900 w-screen h-screen flex items-center justify-center">
                         <div className="flex flex-col items-center">

@@ -1,16 +1,15 @@
-// hooks/useMobileDetection.ts
-import { useState, useEffect } from 'react';
+import { useLayoutEffect } from 'react';
+import { useAppStateStore } from '../store/appStateStore';
 
 export const useMobileDetection = (breakpoint: number = 768) => {
-  const [isMobile, setIsMobile] = useState(false);
+  const { setIsMobile } = useAppStateStore();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < breakpoint);
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, [breakpoint]);
 
-  return isMobile;
 };

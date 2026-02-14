@@ -8,7 +8,7 @@ export interface Experience {
 
 export const experienceData: Experience[] = [
   {
-    id: 1,
+    id: 0,
     title: "FISERV",
     subtitle: "Senior Full Stack Developer | Jan 2024 - Present",
     bullets: [
@@ -21,7 +21,7 @@ export const experienceData: Experience[] = [
     tech: ['C#', '.Net 8.0', 'Angular', 'GraphQL', 'Postgres', 'Azure DevOps', 'Bitbucket', 'Jira', 'MSSQL']
   },
   {
-    id: 2,
+    id: 1,
     title: "CONIX",
     subtitle: "Senior Full Stack Developer / Computational Designer | Jul 2021 – Jan 2024",
     bullets: [
@@ -35,7 +35,7 @@ export const experienceData: Experience[] = [
     tech: ['Node.js', 'React', 'Angular', 'Three.js', 'AWS', 'MYSQL', 'MSSQL', 'GoDaddy', 'Cloudflare', 'Docker', 'Rhino', 'Grasshopper', 'Python', 'C++']
   },
   {
-    id: 3,
+    id: 2,
     title: "MODERN ACADEMY",
     subtitle: "Bachelor's Degree in Architecture | Sep 2012 – Jun 2017",
     bullets: [
@@ -46,8 +46,8 @@ export const experienceData: Experience[] = [
   }
 ];
 
-export const getExperienceByScrollIndex = (scrollIndex: number): Experience => {
-  return experienceData.find(exp => exp.id === scrollIndex) || {
+export const getExperienceByIndex = (index: number): Experience => {
+  return experienceData.find(exp => exp.id === index) || {
     id: 0,
     title: "",
     subtitle: "",

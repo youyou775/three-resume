@@ -3,14 +3,12 @@ import { useGLTF } from '@react-three/drei';
 import { applyMats, extractTexturePaths, loadTextures } from '../utils/applyMats';
 import { GLTF } from 'three-stdlib';
 import { ObjectMap } from '@react-three/fiber';
-import { useScrollStore } from '../store/scrollStore';
 import { useAppStateStore } from '../store/appStateStore';
 
 export function UseGLTFAssetLoader() {
   const basePath = process.env.NODE_ENV === 'production' ? '/three-resume' : '';
 
-  const { scrollIndex } = useScrollStore();
-  const { setAssetsLoaded } = useAppStateStore();
+  const { bulletIndex, initialLoad, setAssetsLoaded } = useAppStateStore();
 
 
   // Load main scene immediately (hook-safe)
@@ -35,14 +33,14 @@ export function UseGLTFAssetLoader() {
 
   const currentGltfHook = useMemo(() => {
     if (!gltfs.length) return null;
-    if (scrollIndex === 0) return gltfs[0] || null;
-    return gltfs[Math.max(0, Math.min(scrollIndex - 1, gltfs.length - 1))];
-  }, [gltfs, scrollIndex])
+    if (initialLoad) return gltfs[0] || null;
+    return gltfs[bulletIndex];
+  }, [gltfs, bulletIndex])
 
-  //load scene when scrollIndex changes 
+  //load scene when bulletIndex changes 
   useEffect(() => {
     setcurrentGltf(currentGltfHook);
-  }, [currentGltf, scrollIndex])
+  }, [currentGltf, bulletIndex])
 
   // Background preload via Promise (no hooks inside Promise!)
   useEffect(() => {
