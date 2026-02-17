@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React from 'react';
 import Three from './stages/Three';
 import WelcomeOverlay from './stages/WelcomeOverlay';
 import SidePaneOverlay from './stages/SidePaneOverlay';

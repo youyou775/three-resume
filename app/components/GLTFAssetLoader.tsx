@@ -40,7 +40,7 @@ export function UseGLTFAssetLoader() {
   //load scene when bulletIndex changes 
   useEffect(() => {
     setcurrentGltf(currentGltfHook);
-  }, [currentGltf, bulletIndex])
+  }, [currentGltfHook])
 
   // Background preload via Promise (no hooks inside Promise!)
   useEffect(() => {
